@@ -28,8 +28,13 @@ concentration = labelledField "Concentration"
 canvas : [(Float,Float)] -> Element
 canvas points = Graphics.Collage.collage 200 200 [traced (solid lightBlue) <| Graphics.Collage.path points]
 
-makePoints : String -> String -> [(Float,Float)]
-makePoints x y = [(getFloat x, getFloat y),(-1 * getFloat x, getFloat y)]
+base : [Float]
+base = [-100..100]
+
+square x y z = (z-getFloat x)*(z-getFloat x)+getFloat y
+
+makePoints : (Float -> Float) -> [(Float,Float)]
+makePoints f = zip base <| map f base
 
 
 add a b = getFloat a + getFloat b
@@ -37,12 +42,11 @@ add a b = getFloat a + getFloat b
 
 radcon = lift (plainText . show) <| lift2 add (snd rad) (snd concentration)
 
-
 scene terms = flow down <| terms
 
-graphCanvas : String -> String -> Element
-graphCanvas x y = canvas <| makePoints x y
+graphCanvas : Signal Element
+graphCanvas = lift canvas <| lift makePoints (lift2 square (snd rad) (snd concentration)) 
 
 
-main = lift scene <| combine [lift2 graphCanvas (snd rad) (snd concentration), fst rad, fst concentration, radcon]
+main = lift scene <| combine [graphCanvas , fst rad, fst concentration, radcon]
 --main = lift scene <| combine [fst rad, fst concentration, radcon]
