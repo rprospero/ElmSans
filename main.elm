@@ -36,7 +36,7 @@ yaxisKind = labelledChoice "Y-axis" [("Linear",Linear),("Log",Log)]
 
 xaxis : Signal (Float->Float)
 xaxis = lift4 axisMaker (snd xaxisKind) (lift toFloat width) (snd qmin) (snd qmax)
-yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (snd imin) (snd imax)
+yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (lift (foldr1 min . map snd)  plotPoints) (lift (foldr1 max . map snd) plotPoints)
 
 projectPoints : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> [(Float,Float)]
 projectPoints fx fy ps = zip (map (fx . fst) ps) (map (fy . snd) ps)
@@ -69,5 +69,5 @@ main = lift scene <| combine [graphCanvas , FormFactor.hardBox `labove`
                               sizeBox `labove` fst xaxisKind `labove` 
                               fst yaxisKind,
                               lift3 testread xaxis yaxis plotPoints,
-                              lift (plainText . show) height]
+                              lift (plainText . show . foldr1 min . map snd) plotPoints]
 
