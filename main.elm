@@ -1,6 +1,7 @@
 module Main where
 
 import Graphics.Collage
+import Graphics.Input
 import FormFactor
 import Util (labelledField,range)
 import Window
@@ -16,11 +17,24 @@ width=lift (\x -> (x*3) `div` 4) Window.width
 height=lift (\x -> (x*4) `div` 5) Window.height
 
 --Axis stuff
-axisMaker size low high value = (value-low)/(high-low)*size-size/2
+
+data Axis = Linear | Log
+
+log = logBase 10
+
+axisMaker kind size low high value = 
+          case kind of
+               Linear -> (value-low)/(high-low)*size-size/2
+               Log ->  let v = log value
+                           l = log low
+                           h = log high
+                       in (v-l)/(h-l)*size-size/2
+
+yaxisKind = Graphics.Input.dropDown [("Linear",Linear),("Log",Log)]
 
 xaxis : Signal (Float->Float)
-xaxis = lift3 axisMaker (lift toFloat width) (snd qmin) (snd qmax)
-yaxis = lift3 axisMaker (lift toFloat height) (snd imin) (snd imax)
+xaxis = lift3 (axisMaker Linear) (lift toFloat width) (snd qmin) (snd qmax)
+yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (snd imin) (snd imax)
 
 projectPoints : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> [(Float,Float)]
 projectPoints fx fy ps = zip (map (fx . fst) ps) (map (fy . snd) ps)
@@ -50,7 +64,7 @@ testread xax yax = plainText . show . head . (projectPoints xax yax)
 sizeBox = foldl (lift2 above) (fst imax) (map fst [imin, qcount, qmax, qmin])
 
 main = lift scene <| combine [graphCanvas , lift2 above FormFactor.hardBox 
-                              sizeBox,
+                              sizeBox,fst yaxisKind,
                               lift3 testread xaxis yaxis plotPoints,
                               lift (plainText . show) height]
 
