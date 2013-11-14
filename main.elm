@@ -3,7 +3,7 @@ module Main where
 import Graphics.Collage
 import Graphics.Input
 import FormFactor
-import Util (labelledField,range)
+import Util (labelledField,labelledChoice,range,labove)
 import Window
 
 
@@ -30,10 +30,12 @@ axisMaker kind size low high value =
                            h = log high
                        in (v-l)/(h-l)*size-size/2
 
-yaxisKind = Graphics.Input.dropDown [("Linear",Linear),("Log",Log)]
+--yaxisKind = Graphics.Input.dropDown [("Linear",Linear),("Log",Log)]
+xaxisKind = labelledChoice "X-axis" [("Linear",Linear),("Log",Log)]
+yaxisKind = labelledChoice "Y-axis" [("Linear",Linear),("Log",Log)]
 
 xaxis : Signal (Float->Float)
-xaxis = lift3 (axisMaker Linear) (lift toFloat width) (snd qmin) (snd qmax)
+xaxis = lift4 axisMaker (snd xaxisKind) (lift toFloat width) (snd qmin) (snd qmax)
 yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (snd imin) (snd imax)
 
 projectPoints : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> [(Float,Float)]
@@ -63,8 +65,9 @@ testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 sizeBox = foldl (lift2 above) (fst imax) (map fst [imin, qcount, qmax, qmin])
 
-main = lift scene <| combine [graphCanvas , lift2 above FormFactor.hardBox 
-                              sizeBox,fst yaxisKind,
+main = lift scene <| combine [graphCanvas , FormFactor.hardBox `labove` 
+                              sizeBox `labove` fst xaxisKind `labove` 
+                              fst yaxisKind,
                               lift3 testread xaxis yaxis plotPoints,
                               lift (plainText . show) height]
 
