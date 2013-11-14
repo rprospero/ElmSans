@@ -14,8 +14,8 @@ liftFloat = lift getFloat
 
 labelit title elem = flow right [plainText title, elem]
 
-labelledField : String -> (Signal Element, Signal Float)
-labelledField title = let (elem,str) = Graphics.Input.field ""
+labelledField : String -> String-> (Signal Element, Signal Float)
+labelledField title dflt = let (elem,str) = Graphics.Input.field dflt
   in (lift (labelit title) elem,liftFloat str)
 
 
@@ -28,12 +28,12 @@ fromJust dflt val = maybe dflt id val
 fst (a,_) = a
 
 
-rad = labelledField "Radius"
-concentration = labelledField "Concentration"
-qmin = labelledField "Q-min"
-qmax = labelledField "Q-max"
-imin = labelledField "I-min"
-imax = labelledField "I-max"
+rad = labelledField "Radius" "0.2"
+concentration = labelledField "Concentration" "0.0"
+qmin = labelledField "Q-min" "0.0"
+qmax = labelledField "Q-max" "100.0"
+imin = labelledField "I-min" "0.0"
+imax = labelledField "I-max" "0.000001"
 
 
 --Axis stuff
@@ -50,7 +50,7 @@ canvas : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
 canvas xax yax points = Graphics.Collage.collage 200 200 [traced (solid lightBlue) <| Graphics.Collage.path (projectPoints xax yax points)]
 
 base : [Float]
-base = [0..100]
+base = [0..200]
 
 square x y z = (z-x)*(z-x)+y
 
