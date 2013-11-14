@@ -10,8 +10,6 @@ import Window
 qmin = labelledField "Q-min" "0.0"
 qmax = labelledField "Q-max" "100.0"
 qcount = labelledField "Q-samples" "100"
-imin = labelledField "I-min" "0.0"
-imax = labelledField "I-max" "0.000001"
 
 width=lift (\x -> (x*3) `div` 4) Window.width
 height=lift (\x -> (x*4) `div` 5) Window.height
@@ -63,7 +61,7 @@ testread : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
 testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 
-sizeBox = foldl (lift2 above) (fst imax) (map fst [imin, qcount, qmax, qmin])
+sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
 main = lift scene <| combine [graphCanvas , FormFactor.hardBox `labove` 
                               sizeBox `labove` fst xaxisKind `labove` 
