@@ -4,6 +4,7 @@ import Graphics.Input
 import Graphics.Collage
 import String
 import FormFactor
+import Signal
 
 
 --Helper Function to read a Float
@@ -19,22 +20,22 @@ labelledField title dflt = let (elem,str) = Graphics.Input.field dflt
   in (lift (labelit title) elem,liftFloat str)
 
 
-(radField,radius) = Graphics.Input.field "Radius"
-
-
 fromJust dflt val = maybe dflt id val
 
 
-fst (a,_) = a
-
+--fst (a,_) = a
 
 rad = labelledField "Radius" "0.2"
-concentration = labelledField "Concentration" "0.0"
+scale = labelledField "Scale" "1.0"
+drho = labelledField "drho" "0.000001"
+bgd = labelledField "Background" "0.000001"
 qmin = labelledField "Q-min" "0.0"
 qmax = labelledField "Q-max" "100.0"
 imin = labelledField "I-min" "0.0"
 imax = labelledField "I-max" "0.000001"
 
+hardParams = lift4 FormFactor.hardSphereParams 
+           (snd scale) (snd drho) (snd rad) (snd bgd)
 
 --Axis stuff
 axisMaker size low high value = (value-low)/(high-low)*size-size/2
@@ -58,7 +59,7 @@ makePoints : (Float -> Float) -> [(Float,Float)]
 makePoints f = zip base <| map f base
 
 plotPoints : Signal [(Float,Float)]
-plotPoints = lift makePoints (lift2 (FormFactor.hardSphere 1.0 (10^(-6))) (snd rad) (snd concentration))
+plotPoints = lift makePoints (lift FormFactor.hardSphere hardParams)
 
 scene terms = flow down <| terms
 
@@ -71,7 +72,7 @@ testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 
 main = lift scene <| combine [graphCanvas , fst rad,
-                              fst concentration,
+                              fst scale, fst drho, fst bgd,
                               fst qmin, fst qmax,
                               fst imin, fst imax,
                               lift3 testread xaxis yaxis plotPoints]
