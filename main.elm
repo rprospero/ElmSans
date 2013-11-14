@@ -1,41 +1,14 @@
 module Main where
 
-import Graphics.Input
 import Graphics.Collage
-import String
 import FormFactor
-import Signal
+import Util (labelledField)
 
 
---Helper Function to read a Float
-getFloat = fromJust 0 . String.toFloat
-
-liftFloat : Signal String -> Signal Float
-liftFloat = lift getFloat
-
-labelit title elem = flow right [plainText title, elem]
-
-labelledField : String -> String-> (Signal Element, Signal Float)
-labelledField title dflt = let (elem,str) = Graphics.Input.field dflt
-  in (lift (labelit title) elem,liftFloat str)
-
-
-fromJust dflt val = maybe dflt id val
-
-
---fst (a,_) = a
-
-rad = labelledField "Radius" "0.2"
-scale = labelledField "Scale" "1.0"
-drho = labelledField "drho" "0.000001"
-bgd = labelledField "Background" "0.000001"
 qmin = labelledField "Q-min" "0.0"
 qmax = labelledField "Q-max" "100.0"
 imin = labelledField "I-min" "0.0"
 imax = labelledField "I-max" "0.000001"
-
-hardParams = lift4 FormFactor.hardSphereParams 
-           (snd scale) (snd drho) (snd rad) (snd bgd)
 
 --Axis stuff
 axisMaker size low high value = (value-low)/(high-low)*size-size/2
@@ -53,13 +26,11 @@ canvas xax yax points = Graphics.Collage.collage 200 200 [traced (solid lightBlu
 base : [Float]
 base = [0..200]
 
-square x y z = (z-x)*(z-x)+y
-
 makePoints : (Float -> Float) -> [(Float,Float)]
 makePoints f = zip base <| map f base
 
 plotPoints : Signal [(Float,Float)]
-plotPoints = lift makePoints (lift FormFactor.hardSphere hardParams)
+plotPoints = lift makePoints (lift FormFactor.hardSphere FormFactor.hardParams)
 
 scene terms = flow down <| terms
 
@@ -71,9 +42,8 @@ testread : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
 testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 
-main = lift scene <| combine [graphCanvas , fst rad,
-                              fst scale, fst drho, fst bgd,
+main = lift scene <| combine [graphCanvas , FormFactor.hardBox,
                               fst qmin, fst qmax,
                               fst imin, fst imax,
                               lift3 testread xaxis yaxis plotPoints]
---main = lift scene <| combine [fst rad, fst concentration, radcon]
+
