@@ -1,7 +1,9 @@
+module Main where
+
 import Graphics.Input
 import Graphics.Collage
 import String
-
+import FormFactor
 
 
 --Helper Function to read a Float
@@ -56,7 +58,7 @@ makePoints : (Float -> Float) -> [(Float,Float)]
 makePoints f = zip base <| map f base
 
 plotPoints : Signal [(Float,Float)]
-plotPoints = lift makePoints (lift2 square (snd rad) (snd concentration))
+plotPoints = lift makePoints (lift2 (FormFactor.hardSphere 1.0 (10^(-6))) (snd rad) (snd concentration))
 
 scene terms = flow down <| terms
 
