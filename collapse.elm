@@ -12,7 +12,7 @@ segment op = flow down [title,
                         opacity op <| plainText "I love",
                         opacity op <| plainText "Stacy"]
 
-dropper op h = height h (segment op)
+dropper op h = container 300 h topLeft (segment op)
 
 dbox op h = flow down [dropper op h, plainText "Next"]
 
