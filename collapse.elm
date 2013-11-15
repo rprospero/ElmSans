@@ -40,8 +40,6 @@ flipper _ state = (not state, not state)
 signalFlipper : Signal a -> Signal Bool
 signalFlipper = Automaton.run (Automaton.hiddenState False flipper) False     
 
-swapper a b test = if test then a else b
-
 main = lift (flow right) <| combine [lift dbox (Automaton.run slider 100 clickTimer),
                                      lift (plainText . show) clickTimer,
                                      lift (plainText . show) <| signalFlipper titleButton]
