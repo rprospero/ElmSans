@@ -6,11 +6,14 @@ import Signal
 
 title = plainText "Hello"
 
-segment = flow down [title, plainText "World!", plainText "I love", plainText "Stacy"]
+segment op = flow down [title,
+                        opacity op <| plainText "World!",
+                        opacity op <| plainText "I love",
+                        opacity op <| plainText "Stacy"]
 
-dropper h = height h segment
+dropper op h = height h (segment op)
 
-dbox h = flow down [dropper h, plainText "Next"]
+dbox op h = flow down [dropper op h, plainText "Next"]
 
 move2 : (Int,Int) -> (Bool,Time.Time) -> (Bool,(Bool,Int)) -> ((Bool,(Bool,Int)),(Bool,Int))
 move2 (bottom,top) (click,_) (oldclick,(stt,value)) =
@@ -20,7 +23,8 @@ move2 (bottom,top) (click,_) (oldclick,(stt,value)) =
                else if value < goal
                     then value + 1
                     else value
-  in ((click,(goalState,newVal)),(goalState,newVal))
+      output = (goalState,newVal)
+  in ((click,output),output)
 
 tuple a b = (a,b)
 
@@ -29,5 +33,15 @@ clickTimer = lift2 tuple (Signal.dropRepeats Mouse.isDown) (Time.every (15 * mil
 slider : Automaton.Automaton (Bool,Time.Time) (Bool,Int)
 slider = Automaton.hiddenState (False,(False,0)) (move2 (100,10))
 
+flipper : Bool -> (Bool,Bool) -> ((Bool,Bool),Bool)
+flipper click (oldclick,state) =
+  let output = if (click && (not oldclick)) then not state else state
+  in ((click,output),output)
 
-main = lift (flow right) <| combine [lift (dbox . snd) (Automaton.run slider (False,100) clickTimer), lift (plainText . show) clickTimer]
+signalFlipper : Signal Bool -> Signal Bool
+signalFlipper = Automaton.run (Automaton.hiddenState (False,False) flipper) False     
+
+main = lift (flow right) <| combine [lift2 dbox (lift (\x -> if x then 0.01 else 0.99) Mouse.isDown) <|
+                                     lift snd (Automaton.run slider (False,100) clickTimer),
+                                     lift (plainText . show) clickTimer,
+                                     lift (plainText . show) <| signalFlipper Mouse.isDown]
