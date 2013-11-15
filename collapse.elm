@@ -13,7 +13,7 @@ segment = flow down [title,
                      plainText "Stacy"]
 
 dropper : Int -> Element
-dropper h = container 300 h topLeft segment
+dropper h = container (widthOf segment) h topLeft segment
 
 dbox : Int -> Element
 dbox h = flow down [dropper h, plainText "Next"]
