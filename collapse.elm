@@ -7,14 +7,16 @@ import Signal
 
 (title,titleButton) = Graphics.Input.customButton (plainText "Hello") (plainText "Hello") (plainText "Hello")
 
-segment op = flow down [title,
-                        opacity op <| plainText "World!",
-                        opacity op <| plainText "I love",
-                        opacity op <| plainText "Stacy"]
+segment = flow down [title,
+                     plainText "World!",
+                     plainText "I love",
+                     plainText "Stacy"]
 
-dropper op h = container 300 h topLeft (segment op)
+dropper : Int -> Element
+dropper h = container 300 h topLeft segment
 
-dbox op h = flow down [dropper op h, plainText "Next"]
+dbox : Int -> Element
+dbox h = flow down [dropper h, plainText "Next"]
 
 move2 : (Int,Int) -> (Bool,Time.Time) -> Int -> Int
 move2 (bottom,top) (click,_) value =
@@ -40,7 +42,6 @@ signalFlipper = Automaton.run (Automaton.hiddenState False flipper) False
 
 swapper a b test = if test then a else b
 
-main = lift (flow right) <| combine [lift2 dbox (lift (swapper 0.99 0.01) <| signalFlipper titleButton) <|
-                                     (Automaton.run slider 100 clickTimer),
+main = lift (flow right) <| combine [lift dbox (Automaton.run slider 100 clickTimer),
                                      lift (plainText . show) clickTimer,
                                      lift (plainText . show) <| signalFlipper titleButton]
