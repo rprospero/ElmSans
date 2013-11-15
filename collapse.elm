@@ -29,7 +29,7 @@ tuple a b = (a,b)
 clickTimer = lift2 tuple (signalFlipper Mouse.isDown) (Time.every (15 * millisecond))
 
 slider : Automaton.Automaton (Bool,Time.Time) Int
-slider = Automaton.state 0 (move2 (100,10))
+slider = Automaton.state 0 (move2 (10,100))
 
 flipper : Bool -> (Bool,Bool) -> ((Bool,Bool),Bool)
 flipper click (oldclick,state) =
@@ -39,7 +39,9 @@ flipper click (oldclick,state) =
 signalFlipper : Signal Bool -> Signal Bool
 signalFlipper = Automaton.run (Automaton.hiddenState (False,False) flipper) False     
 
-main = lift (flow right) <| combine [lift2 dbox (lift (\x -> if x then 0.01 else 0.99) Mouse.isDown) <|
+swapper a b test = if test then a else b
+
+main = lift (flow right) <| combine [lift2 dbox (lift (swapper 0.99 0.01) <| signalFlipper Mouse.isDown) <|
                                      (Automaton.run slider 100 clickTimer),
                                      lift (plainText . show) clickTimer,
                                      lift (plainText . show) <| signalFlipper Mouse.isDown]
