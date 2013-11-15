@@ -12,26 +12,26 @@ segment = flow down [plainText "World!",
 move2 : (Int,Int) -> (Bool,Time.Time) -> Int -> Int
 move2 (bottom,top) (click,_) value =
   let goal = if click then top else bottom
-      newVal = if value > goal then value - 1
-               else if value < goal
-                    then value + 1
-                    else value
-  in newVal
+  in case compare value goal of
+    GT -> value - 1
+    LT -> value + 1
+    EQ -> value
 
 tuple a b = (a,b)
 
-collapsible : String -> Element -> Signal Element
-collapsible titleString es = let (title,titleButton) = Graphics.Input.customButton 
-                                                       (plainText titleString)
-                                                       (plainText titleString)
-                                                       (plainText titleString)
-                                 box = flow down [title,es]
-                                 slider = Automaton.state (heightOf box) (move2 (heightOf title,heightOf box))
-                                 clickTimer = lift2 tuple (signalFlipper titleButton)
-                                              (Time.every (15 * millisecond))
-                             in lift (\h -> container (widthOf box) h topLeft box)
-                                <| Automaton.run slider (heightOf box) clickTimer
+collapsible : Element -> Element -> Int -> Element
+collapsible title es = let box = flow down [title,es]
+                       in (\h -> container (widthOf box) h topLeft box)
 
+makeTitle : String -> (Element, Signal ())
+makeTitle titleString = Graphics.Input.customButton (plainText titleString) (plainText titleString) (plainText titleString)                          
+
+slider : Int -> Int -> Automaton.Automaton (Bool,Time.Time) Int
+slider hTitle hBox = Automaton.state hTitle (move2 (hTitle,hBox))
+
+clickTimer : Signal () -> Signal (Bool,Time.Time)
+clickTimer titleButton = lift2 tuple (signalFlipper titleButton)
+                         (Time.every (15 * millisecond))
 
 flipper : a -> Bool -> (Bool,Bool)
 flipper _ state = (not state, not state)
@@ -39,4 +39,9 @@ flipper _ state = (not state, not state)
 signalFlipper : Signal a -> Signal Bool
 signalFlipper = Automaton.run (Automaton.hiddenState False flipper) False     
 
-main = lift (flow right) <| combine [collapsible "Hello" segment]
+(title,tb) = makeTitle "Hello"
+
+main = lift (flow down) <| combine [lift (collapsible title segment) 
+                                     <| Automaton.run (slider (heightOf title) (heightOf title + heightOf segment))
+                                     (heightOf title) (clickTimer tb),
+                                     constant <| plainText "Next"]
