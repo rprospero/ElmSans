@@ -30,7 +30,7 @@ tuple a b = (a,b)
 clickTimer = lift2 tuple (signalFlipper titleButton) (Time.every (15 * millisecond))
 
 slider : Automaton.Automaton (Bool,Time.Time) Int
-slider = Automaton.state 0 (move2 (10,100))
+slider = Automaton.state 10 (move2 (10,100))
 
 flipper : a -> Bool -> (Bool,Bool)
 flipper _ state = (not state, not state)
