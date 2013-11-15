@@ -5,18 +5,9 @@ import Mouse
 import Time
 import Signal
 
-(title,titleButton) = Graphics.Input.customButton (plainText "Hello") (plainText "Hello") (plainText "Hello")
-
-segment = flow down [title,
-                     plainText "World!",
+segment = flow down [plainText "World!",
                      plainText "I love",
                      plainText "Stacy"]
-
-dropper : Int -> Element
-dropper h = container (widthOf segment) h topLeft segment
-
-dbox : Int -> Element
-dbox h = flow down [dropper h, plainText "Next"]
 
 move2 : (Int,Int) -> (Bool,Time.Time) -> Int -> Int
 move2 (bottom,top) (click,_) value =
@@ -29,10 +20,18 @@ move2 (bottom,top) (click,_) value =
 
 tuple a b = (a,b)
 
-clickTimer = lift2 tuple (signalFlipper titleButton) (Time.every (15 * millisecond))
+collapsible : String -> Element -> Signal Element
+collapsible titleString es = let (title,titleButton) = Graphics.Input.customButton 
+                                                       (plainText titleString)
+                                                       (plainText titleString)
+                                                       (plainText titleString)
+                                 box = flow down [title,es]
+                                 slider = Automaton.state (heightOf box) (move2 (heightOf title,heightOf box))
+                                 clickTimer = lift2 tuple (signalFlipper titleButton)
+                                              (Time.every (15 * millisecond))
+                             in lift (\h -> container (widthOf box) h topLeft box)
+                                <| Automaton.run slider (heightOf box) clickTimer
 
-slider : Automaton.Automaton (Bool,Time.Time) Int
-slider = Automaton.state 10 (move2 (heightOf title,heightOf segment))
 
 flipper : a -> Bool -> (Bool,Bool)
 flipper _ state = (not state, not state)
@@ -40,6 +39,4 @@ flipper _ state = (not state, not state)
 signalFlipper : Signal a -> Signal Bool
 signalFlipper = Automaton.run (Automaton.hiddenState False flipper) False     
 
-main = lift (flow right) <| combine [lift dbox (Automaton.run slider 100 clickTimer),
-                                     lift (plainText . show) clickTimer,
-                                     lift (plainText . show) <| signalFlipper titleButton]
+main = lift (flow right) <| combine [collapsible "Hello" segment]
