@@ -1,6 +1,10 @@
 module FormFactor where
 
-import Util (labelledField)
+import Util (labelledField,getFloat)
+import Collapse (collapsibleSignal,collapsible)
+import Graphics.Input (fields)
+import Fields (updater,fieldMaker)
+
 
 hardSphere params q = 
            let xrad = q * params.radius
@@ -23,7 +27,23 @@ drho = labelledField "drho" "0.000001"
 bgd = labelledField "Background" "0.000001"
 
 
+hsCondenser (name,val) rec = case name of
+                          "Scale" -> {rec - scale | scale = getFloat val}
+                          "Radius" -> {rec - radius | radius = getFloat val}
+                          "drho" -> {rec - drho | drho = getFloat val}
+                          "Background" -> {rec - bgd | bgd = getFloat val}
+                          _ -> rec
+
 hardParams = lift4 hardSphereParams 
            (snd scale) (snd drho) (snd rad) (snd bgd)
 
 hardBox = foldl (lift2 above) (fst rad) (map fst [scale, drho, bgd])
+
+hsgroup = fields ("Name","1.0")
+
+hsSignal = updater hsCondenser {scale=1.0,radius=1.0,drho=1.0,bgd=0.0}
+
+hsBox = flow down <| [fieldMaker hsgroup "Scale" "1.0",
+                      fieldMaker hsgroup "Radius" "1.0",
+                      fieldMaker hsgroup "drho" "1.0",
+                      fieldMaker hsgroup "Background" "0.0"]
