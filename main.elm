@@ -49,7 +49,7 @@ makePoints : [Float] -> (Float -> Float) -> [(Float,Float)]
 makePoints base f = zip base <| map f base
 
 plotPoints : Signal [(Float,Float)]
-plotPoints = lift2 makePoints (lift3 range (snd qmin) (snd qmax) (snd qcount)) (lift FormFactor.hardSphere FormFactor.hardParams)
+plotPoints = lift2 makePoints (lift3 range (snd qmin) (snd qmax) (snd qcount)) (lift FormFactor.hardSphere FormFactor.hsSignal)
 
 scene terms = flow right <| terms
 
@@ -63,9 +63,7 @@ testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
-main = lift scene <| combine [graphCanvas , FormFactor.hardBox `labove` 
-
-                                            sizeBox `labove` fst xaxisKind `labove` 
+main = lift scene <| combine [graphCanvas , sizeBox `labove` fst xaxisKind `labove` 
                               fst yaxisKind `labove`
                               lift FormFactor.hsBox FormFactor.hsCollapse,
                               lift3 testread xaxis yaxis plotPoints,
