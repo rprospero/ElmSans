@@ -10,9 +10,10 @@ group = fields ("Name","1.0")
 sig = group.events
 
 fieldMaker : {events:Signal (String,String),field:(FieldState->(String,String)) -> String -> FieldState ->Element } -> String -> String -> Element
-fieldMaker group name dflt = group.field 
+fieldMaker group name dflt = flow right [plainText name,
+                             group.field 
                              (\r -> (name,r.string))
-                             name {string=dflt,selectionStart=0,selectionEnd=0}
+                             name {string=dflt,selectionStart=0,selectionEnd=0}]
 
 condenser (name,val) rec = case name of
                 "Test" -> {rec - test | test = getFloat val}
