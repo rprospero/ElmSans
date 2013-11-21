@@ -85,7 +85,6 @@ testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 main = lift scene <| combine [graphCanvas , lift FormFactor.hsBox FormFactor.hsCollapse `labove`
                                             lift qBox qCollapse `labove`
-                                            fst xaxisKind `labove` fst yaxisKind,
-                              lift3 testread xaxis yaxis plotPoints,
-                              lift (plainText . show . foldr1 min . map snd) plotPoints]
+                                            fst xaxisKind `labove`
+                                            fst yaxisKind]
 
