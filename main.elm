@@ -3,13 +3,33 @@ module Main where
 import Graphics.Collage
 import Graphics.Input
 import FormFactor
-import Util (labelledField,labelledChoice,range,labove)
+import Util (labelledField,labelledChoice,range,labove,getFloat)
 import Window
+import Collapse
+import Fields (updater,fieldMaker)
 
 
-qmin = labelledField "Q-min" "0.0"
-qmax = labelledField "Q-max" "100.0"
-qcount = labelledField "Q-samples" "100"
+qGroup = Graphics.Input.fields ("Name","Value")
+qRange rec = range rec.qmin rec.qmax rec.qcount
+
+qCondenser (name,val) rec = case name of
+                            "qmin" -> {rec - qmin | qmin = getFloat val}
+                            "qmax" -> {rec - qmax | qmax = getFloat val}
+                            "qcount" -> {rec - qcount | qcount = getFloat val}
+                            _ -> rec
+                            
+qSignal = updater qCondenser {qmin=0.001,qmax=20,qcount=1000} qGroup.events
+qTitle = plainText "Q-Range"
+qFields = flow down <| [fieldMaker qGroup "qmin" "0.001",
+                        fieldMaker qGroup "qmax" "20",
+                        fieldMaker qGroup "qcount" "1000"]
+
+(qButton,qCollapse) = Collapse.collapsibleSignal qTitle qFields
+qBox = Collapse.collapsible qButton qFields
+
+--qmin = labelledField "Q-min" "0.0"
+--qmax = labelledField "Q-max" "100.0"
+--qcount = labelledField "Q-samples" "100"
 
 width=lift (\x -> (x*3) `div` 4) Window.width
 height=lift (\x -> (x*4) `div` 5) Window.height
@@ -33,7 +53,7 @@ xaxisKind = labelledChoice "X-axis" [("Linear",Linear),("Log",Log)]
 yaxisKind = labelledChoice "Y-axis" [("Linear",Linear),("Log",Log)]
 
 xaxis : Signal (Float->Float)
-xaxis = lift4 axisMaker (snd xaxisKind) (lift toFloat width) (snd qmin) (snd qmax)
+xaxis = lift4 axisMaker (snd xaxisKind) (lift toFloat width) (lift (\x -> x.qmin) qSignal) (lift (\x -> x.qmax) qSignal)
 yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (lift (foldr1 min . map snd)  plotPoints) (lift (foldr1 max . map snd) plotPoints)
 
 projectPoints : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> [(Float,Float)]
@@ -49,7 +69,7 @@ makePoints : [Float] -> (Float -> Float) -> [(Float,Float)]
 makePoints base f = zip base <| map f base
 
 plotPoints : Signal [(Float,Float)]
-plotPoints = lift2 makePoints (lift3 range (snd qmin) (snd qmax) (snd qcount)) (lift FormFactor.hardSphere FormFactor.hsSignal)
+plotPoints = lift2 makePoints (lift qRange qSignal) (lift FormFactor.hardSphere FormFactor.hsSignal)
 
 scene terms = flow right <| terms
 
@@ -61,11 +81,11 @@ testread : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
 testread xax yax = plainText . show . head . (projectPoints xax yax)
 
 
-sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
+--sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
-main = lift scene <| combine [graphCanvas , sizeBox `labove` fst xaxisKind `labove` 
-                              fst yaxisKind `labove`
-                              lift FormFactor.hsBox FormFactor.hsCollapse,
+main = lift scene <| combine [graphCanvas , lift FormFactor.hsBox FormFactor.hsCollapse `labove`
+                                            lift qBox qCollapse `labove`
+                                            fst xaxisKind `labove` fst yaxisKind,
                               lift3 testread xaxis yaxis plotPoints,
                               lift (plainText . show . foldr1 min . map snd) plotPoints]
 
