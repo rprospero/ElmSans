@@ -41,7 +41,7 @@ hardBox = foldl (lift2 above) (fst rad) (map fst [scale, drho, bgd])
 
 hsgroup = fields ("Name","1.0")
 
-hsSignal = updater hsCondenser {scale=1.0,radius=1.0,drho=1.0,bgd=0.0}
+hsSignal = updater hsCondenser {scale=1.0,radius=1.0,drho=1.0,bgd=0.0} hsgroup.events
 
 hsTitle = plainText "HardSpheres"
 
