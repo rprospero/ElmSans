@@ -64,8 +64,10 @@ testread xax yax = plainText . show . head . (projectPoints xax yax)
 sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
 main = lift scene <| combine [graphCanvas , FormFactor.hardBox `labove` 
-                              sizeBox `labove` fst xaxisKind `labove` 
-                              fst yaxisKind,
+
+                                            sizeBox `labove` fst xaxisKind `labove` 
+                              fst yaxisKind `labove`
+                              lift FormFactor.hsBox FormFactor.hsCollapse,
                               lift3 testread xaxis yaxis plotPoints,
                               lift (plainText . show . foldr1 min . map snd) plotPoints]
 

@@ -41,13 +41,7 @@ flipper _ state = (not state, not state)
 signalFlipper : Signal a -> Signal Bool
 signalFlipper = Automaton.run (Automaton.hiddenState False flipper) False     
 
-collapsibleSignal : Element -> Element -> Signal () -> Signal Int
-collapsibleSignal title body button = Automaton.run (slider (heightOf title)
-                                                    (heightOf title + heightOf segment))
-                                                    (heightOf title)
-                                                    (clickTimer button)
-
-(title,tb) = makeTitle "Hello"
-main = lift (flow down) <| combine [lift (collapsible title segment) 
-                                     <| collapsibleSignal title segment tb,
-                                     constant <| plainText "Next"]
+collapsibleSignal : Element -> Element -> (Element,Signal Int)
+collapsibleSignal titleElem body = 
+  let (title,tb) = Graphics.Input.customButton titleElem titleElem titleElem
+  in (title,Automaton.run (slider (heightOf title) (heightOf title + heightOf body)) (heightOf title) (clickTimer tb))

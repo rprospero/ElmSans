@@ -1,7 +1,7 @@
 module FormFactor where
 
 import Util (labelledField,getFloat)
-import Collapse (collapsibleSignal,collapsible)
+import Collapse
 import Graphics.Input (fields)
 import Fields (updater,fieldMaker)
 
@@ -43,7 +43,15 @@ hsgroup = fields ("Name","1.0")
 
 hsSignal = updater hsCondenser {scale=1.0,radius=1.0,drho=1.0,bgd=0.0}
 
-hsBox = flow down <| [fieldMaker hsgroup "Scale" "1.0",
-                      fieldMaker hsgroup "Radius" "1.0",
-                      fieldMaker hsgroup "drho" "1.0",
-                      fieldMaker hsgroup "Background" "0.0"]
+hsTitle = plainText "HardSpheres"
+
+hsFields = flow down <| [fieldMaker hsgroup "Scale" "1.0",
+                         fieldMaker hsgroup "Radius" "1.0",
+                         fieldMaker hsgroup "drho" "1.0",
+                         fieldMaker hsgroup "Background" "0.0"]
+
+(hsButton,hsCollapse) = Collapse.collapsibleSignal hsTitle hsFields
+hsBox = Collapse.collapsible hsButton hsFields
+
+
+
