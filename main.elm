@@ -7,7 +7,7 @@ import Util (labelledField,labelledChoice,range,labove,getFloat)
 import Window
 import Collapse
 import Fields (updater,fieldMaker)
-import Graph (makePoints,Axis,Linear,Log,axisMaker,canvas)
+import Graph (makePoints,Axis,Linear,Log,axisMaker,canvas,ticMaker)
 
 
 qGroup = Graphics.Input.fields ("Name","Value")
@@ -37,6 +37,9 @@ xaxis : Signal (Float->Float)
 xaxis = lift4 axisMaker (snd xaxisKind) (lift toFloat width) (lift (\x -> x.qmin) qSignal) (lift (\x -> x.qmax) qSignal)
 yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (lift (foldr1 min . map snd)  plotPoints) (lift (foldr1 max . map snd) plotPoints)
 
+xtics = lift2 (\kind pts -> ticMaker kind <| map snd pts) (snd xaxisKind) plotPoints
+
+ytics = lift2 (\kind pts -> ticMaker kind <| map snd pts) (snd yaxisKind) plotPoints
 --qmin = labelledField "Q-min" "0.0"
 --qmax = labelledField "Q-max" "100.0"
 --qcount = labelledField "Q-samples" "100"
@@ -52,7 +55,7 @@ plotPoints = lift2 makePoints (lift qRange qSignal) (lift FormFactor.hardSphere 
 scene terms = flow right <| terms
 
 graphCanvas : Signal Element
-graphCanvas = lift5 canvas width height xaxis yaxis plotPoints
+graphCanvas = lift7 canvas width height xaxis (snd xaxisKind) yaxis (snd yaxisKind) plotPoints
 
 --testing data
 --testread : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element

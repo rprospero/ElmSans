@@ -15,14 +15,20 @@ axisMaker kind size low high value =
                            h = log high
                        in (v-l)/(h-l)*size-size/2
 
+ticMaker : Axis -> [Float] -> [Float]
+ticMaker kind =
+  case kind of
+    Linear -> smartTics 10
+    Log -> map (\x -> e^x) . smartTics 10 . map log
+
 --yaxisKind = Graphics.Input.dropDown [("Linear",Linear),("Log",Log)]
 
 
 projectPoints : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> [(Float,Float)]
 projectPoints fx fy ps = zip (map (fx . fst) ps) (map (fy . snd) ps)
 
-canvas : Int -> Int -> (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
-canvas w h xax yax points = Graphics.Collage.collage w h [traced (solid lightBlue) <| Graphics.Collage.path (projectPoints xax yax points), xGrid h xax <| map fst points, yGrid w yax <| map snd points]
+canvas : Int -> Int -> (Float->Float) -> Axis -> (Float->Float) -> Axis -> [(Float,Float)] -> Element
+canvas w h xax xKind yax yKind points = Graphics.Collage.collage w h [traced (solid lightBlue) <| Graphics.Collage.path (projectPoints xax yax points), xGrid h xax . ticMaker xKind <| map fst points, yGrid w yax . ticMaker yKind <| map snd points]
 
 --base : [Float]
 --base = range 0 100 1
@@ -31,10 +37,10 @@ smartTics count pts = let low = minimum pts
                           high = maximum pts
                       in range low high count
 
-xGrid h xax pts = group <| map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)),(x,(toFloat h)/2)]) <| smartTics 5 pts
+xGrid h xax pts = group <| map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)),(x,(toFloat h)/2)]) <| pts
 
 
-yGrid h yax pts = group <| map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id yax . \y -> [((toFloat h)/(-2),y),((toFloat h)/2,y)]) <| smartTics 5 pts
+yGrid h yax pts = group <| map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id yax . \y -> [((toFloat h)/(-2),y),((toFloat h)/2,y)]) <| pts
 
 
 makePoints : [Float] -> (Float -> Float) -> [(Float,Float)]
