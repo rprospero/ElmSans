@@ -28,3 +28,13 @@ range a b count = map (\x -> a + x/(count-1) *(b-a)) [0..(count)]
 
 
 labove = lift2 above
+
+floatPrecision : Int -> Float -> String
+floatPrecision digits x =  let splitup = (String.split "e" <| show x)
+                               mantissa = getFloat <| head splitup
+                               exponent = if length splitup == 1 then 0 else getFloat . head  <| tail splitup
+                               secondExponent = truncate . logBase 10 <| mantissa
+                               sigDigs = round (mantissa  / (10 ^ (toFloat (secondExponent - digits))))
+                               final = (toFloat sigDigs) / (10 ^ (toFloat digits))
+                           in String.join "e" [show final , show secondExponent]
+                               
