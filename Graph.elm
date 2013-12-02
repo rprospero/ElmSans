@@ -1,7 +1,7 @@
 module Graph where
 
 import Graphics.Collage
-import Util (range)
+import Util (range,floatPrecision)
 
 data Axis = Linear | Log
 
@@ -32,12 +32,12 @@ smartTics count pts = let low = minimum pts
                       in range low high count
 
 xGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)),(x,(toFloat h)/2)]) <| pts
-                      labels = map (\x -> moveY ((toFloat h)/(-2) + 10) . moveX (xax x) <| toForm . plainText . show <| x) <| pts
+                      labels = map (\x -> moveY ((toFloat h)/(-2) + 10) . moveX (xax x) <| toForm . plainText . floatPrecision 3 <| x) <| pts
                   in group [group lines, group labels]
 
 
 yGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id xax . \x -> [((toFloat h)/(-2),x),((toFloat h)/2,x)]) <| pts
-                      labels = map (\x -> moveX ((toFloat h)/(-2) + 80) . moveY (xax x) <| toForm . plainText . show <| x) <| pts
+                      labels = map (\x -> moveX ((toFloat h)/(-2) + 80) . moveY (xax x) <| toForm . plainText . floatPrecision 3 <| x) <| pts
                   in group [group lines, group labels]
 
 
