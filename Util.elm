@@ -32,9 +32,10 @@ labove = lift2 above
 floatPrecision : Int -> Float -> String
 floatPrecision digits x =  let splitup = (String.split "e" <| show x)
                                mantissa = getFloat <| head splitup
+                               adjust = if mantissa < 1 then 1 else 0
                                exponent = if length splitup == 1 then 0 else getFloat . head  <| tail splitup
                                secondExponent = truncate . logBase 10 <| mantissa
                                sigDigs = round (mantissa  / (10 ^ (toFloat (secondExponent - digits))))
-                               final = (toFloat sigDigs) / (10 ^ (toFloat digits))
-                           in String.join "e" [show final , show secondExponent]
+                               final = (toFloat sigDigs) / (10 ^ (toFloat digits)) * (10^adjust)
+                           in String.join "e" [show final , show (secondExponent-1)]
                                
