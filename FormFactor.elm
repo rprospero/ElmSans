@@ -26,7 +26,7 @@ hsgroup = fields ("Name","1.0")
 
 hsSignal = updater hsCondenser {scale=1.0,radius=1.0,drho=1.0,bgd=0.0} hsgroup.events
 
-hsTitle = plainText "HardSpheres"
+hsTitle = text . Text.color blue . toText <| "HardSpheres"
 
 hsLabelWidth = widthOf . plainText . show <| "Background"
 
