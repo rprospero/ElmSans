@@ -22,7 +22,7 @@ qCondenser (name,val) rec = case name of
                             
 qLabelWidth = widthOf . plainText . show <| "qcount"
 qSignal = updater qCondenser {qmin=0.001,qmax=20,qcount=1000} qGroup.events
-qTitle = text . bold . Text.color (Color 0 0 255 1) . toText <|  "Q-Range"
+qTitle = text . Text.color (Color 0 0 255 1) . toText <|  "▼ Q-Range"
 qFields = flow down <| [fieldMaker qGroup qLabelWidth "qmin" "0.001",
                         fieldMaker qGroup qLabelWidth "qmax" "20",
                         fieldMaker qGroup qLabelWidth "qcount" "1000"]
