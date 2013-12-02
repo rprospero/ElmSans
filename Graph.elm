@@ -5,6 +5,11 @@ import Util (range,floatPrecision)
 
 data Axis = Linear | Log
 
+textWidth : Float
+textWidth = toFloat . widthOf . plainText . show <| "-9.99e-9"
+textHeight : Float
+textHeight = toFloat . heightOf . plainText . show <| "-9.99e-9"
+
 log = logBase 10
 
 axisMaker kind size low high value = 
@@ -31,13 +36,13 @@ smartTics count pts = let low = minimum pts
                           high = maximum pts
                       in range low high count
 
-xGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)),(x,(toFloat h)/2)]) <| pts
-                      labels = map (\x -> moveY ((toFloat h)/(-2) + 10) . moveX (xax x) <| toForm . plainText . floatPrecision 3 <| x) <| pts
+xGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)+textHeight),(x,(toFloat h)/2)]) <| pts
+                      labels = map (\x -> moveY ((toFloat h)/(-2) + textHeight/2) . moveX (xax x) <| toForm . plainText . floatPrecision 3 <| x) <| pts
                   in group [group lines, group labels]
 
 
-yGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id xax . \x -> [((toFloat h)/(-2),x),((toFloat h)/2,x)]) <| pts
-                      labels = map (\x -> moveX ((toFloat h)/(-2) + 80) . moveY (xax x) <| toForm . plainText . floatPrecision 3 <| x) <| pts
+yGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id xax . \x -> [((toFloat h)/(-2)+textWidth,x),((toFloat h)/2,x)]) <| pts
+                      labels = map (\x -> moveX ((toFloat h)/(-2) + textWidth/2) . moveY (xax x) <| toForm . plainText . floatPrecision 3 <| x) <| pts
                   in group [group lines, group labels]
 
 

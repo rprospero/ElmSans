@@ -59,17 +59,17 @@ graphCanvas = lift7 canvas width height xaxis (snd xaxisKind) yaxis (snd yaxisKi
 
 --testing data
 --testread : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
---testread xax yax = plainText . show . head . (projectPoints xax yax)
+--testread xax yax = +textHeightplainText . show . head . (projectPoints xax yax)
 
 
 --sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
-width=lift (\x -> (x*3) `div` 4) Window.width
-height=lift (\x -> x - 20) Window.height
+width= lift (\x -> x - 280) Window.width
+height= Window.height
 
 
-main = lift scene <| combine [graphCanvas , lift FormFactor.hsBox FormFactor.hsCollapse `labove`
-                                            lift qBox qCollapse `labove`
-                                            fst xaxisKind `labove`
-                                            fst yaxisKind]
+sidebar : Signal Element
+sidebar = lift FormFactor.hsBox FormFactor.hsCollapse `labove` lift qBox qCollapse `labove` fst xaxisKind `labove` fst yaxisKind
 
+
+main = lift scene <| combine [graphCanvas , sidebar]
