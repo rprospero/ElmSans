@@ -2,6 +2,7 @@ module Main where
 
 --import Graphics.Collage
 import Graphics.Input
+import Graphics.Element
 import FormFactor
 import Util (labelledField,labelledChoice,range,labove,getFloat)
 import Window
@@ -29,6 +30,10 @@ qFields = flow down <| [fieldMaker qGroup qLabelWidth "qmin" "0.001",
 (qButton,qCollapse) = Collapse.collapsibleSignal qTitle qFields
 qBox = Collapse.collapsible qButton qFields
 
+valueTitle = text . Text.color blue . toText <| "Values"
+valueTable = plainText "Lorem Ipsum"
+(valueButton,valueCollapse) = Collapse.collapsibleSignal valueTitle valueTable
+valueBox = Collapse.collapsible valueButton valueTable
 
 xaxisKind = labelledChoice "X-axis" [("Linear",Linear),("Log",Log)]
 yaxisKind = labelledChoice "Y-axis" [("Linear",Linear),("Log",Log)]
@@ -53,6 +58,14 @@ ytics = lift2 (\kind pts -> ticMaker kind <| map snd pts) (snd yaxisKind) plotPo
 plotPoints : Signal [(Float,Float)]
 plotPoints = lift2 makePoints (lift qRange qSignal) (lift FormFactor.hardSphere FormFactor.hsSignal)
 
+-- Turns a list of point tuples into a 2d table
+tablePoints pts = let xs = map (plainText . show . fst) pts
+                      ys = map (plainText . show . snd) pts
+                      xmax = maximum <| map widthOf xs
+                      ymax = maximum <| map widthOf ys
+                  in flow down <| map (\(x,y) -> Graphics.Element.width xmax x `beside` Graphics.Element.width ymax y) <| zip xs ys
+
+
 scene terms = flow right <| terms
 
 graphCanvas : Signal Element
@@ -70,7 +83,7 @@ height= Window.height
 
 
 sidebar : Signal Element
-sidebar = lift FormFactor.hsBox FormFactor.hsCollapse `labove` lift qBox qCollapse `labove` fst xaxisKind `labove` fst yaxisKind
+sidebar = lift FormFactor.hsBox FormFactor.hsCollapse `labove` lift qBox qCollapse `labove` fst xaxisKind `labove` fst yaxisKind -- `labove` lift (tablePoints . take 5) plotPoints
 
 
 main = lift scene <| combine [graphCanvas , sidebar]
