@@ -22,7 +22,7 @@ qCondenser (name,val) rec = case name of
                             
 qLabelWidth = widthOf . plainText . show <| "qcount"
 qSignal = updater qCondenser {qmin=0.001,qmax=20,qcount=1000} qGroup.events
-qTitle = text . Text.color blue . toText <|  "Q-Range"
+qTitle = text . bold . Text.color (Color 0 0 255 1) . toText <|  "Q-Range"
 qFields = flow down <| [fieldMaker qGroup qLabelWidth "qmin" "0.001",
                         fieldMaker qGroup qLabelWidth "qmax" "20",
                         fieldMaker qGroup qLabelWidth "qcount" "1000"]
@@ -70,7 +70,7 @@ height= Window.height
 
 
 sidebar : Signal Element
-sidebar = lift FormFactor.hsBox FormFactor.hsCollapse `labove` lift qBox qCollapse `labove` fst xaxisKind `labove` fst yaxisKind -- `labove` lift (tablePoints . take 5) plotPoints
+sidebar = lift FormFactor.hsBox FormFactor.hsCollapse `labove` lift qBox qCollapse `labove` constant  (text . bold . toText <| "Axis Options") `labove` fst xaxisKind `labove` fst yaxisKind -- `labove` lift (tablePoints . take 5) plotPoints
 
 
 main = lift scene <| combine [graphCanvas , sidebar]
