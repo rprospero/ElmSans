@@ -18,8 +18,8 @@ axisMaker kind size low high value =
 ticMaker : Axis -> [Float] -> [Float]
 ticMaker kind =
   case kind of
-    Linear -> smartTics 10
-    Log -> map (\x -> e^x) . smartTics 10 . map log
+    Linear -> smartTics 3
+    Log -> map (\x -> e^x) . smartTics 4 . map log
 
 projectPoints : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> [(Float,Float)]
 projectPoints fx fy ps = zip (map (fx . fst) ps) (map (fy . snd) ps)
@@ -31,10 +31,15 @@ smartTics count pts = let low = minimum pts
                           high = maximum pts
                       in range low high count
 
-xGrid h xax pts = group <| map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)),(x,(toFloat h)/2)]) <| pts
+xGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints xax id . \x -> [(x,(toFloat h)/(-2)),(x,(toFloat h)/2)]) <| pts
+                      labels = map (\x -> moveY ((toFloat h)/(-2) + 10) . moveX (xax x) <| toForm . plainText . show <| x) <| pts
+                  in group [group lines, group labels]
 
 
-yGrid h yax pts = group <| map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id yax . \y -> [((toFloat h)/(-2),y),((toFloat h)/2,y)]) <| pts
+yGrid h xax pts = let lines = map (traced (solid darkGrey) . Graphics.Collage.path . projectPoints id xax . \x -> [((toFloat h)/(-2),x),((toFloat h)/2,x)]) <| pts
+                      labels = map (\x -> moveX ((toFloat h)/(-2) + 80) . moveY (xax x) <| toForm . plainText . show <| x) <| pts
+                  in group [group lines, group labels]
+
 
 
 makePoints : [Float] -> (Float -> Float) -> [(Float,Float)]
