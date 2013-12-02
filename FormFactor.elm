@@ -28,10 +28,12 @@ hsSignal = updater hsCondenser {scale=1.0,radius=1.0,drho=1.0,bgd=0.0} hsgroup.e
 
 hsTitle = plainText "HardSpheres"
 
-hsFields = flow down <| [fieldMaker hsgroup "Scale" "1.0",
-                         fieldMaker hsgroup "Radius" "1.0",
-                         fieldMaker hsgroup "drho" "1.0",
-                         fieldMaker hsgroup "Background" "0.0"]
+hsLabelWidth = widthOf . plainText . show <| "Background"
+
+hsFields = flow down <| [fieldMaker hsgroup hsLabelWidth "Scale" "1.0",
+                         fieldMaker hsgroup hsLabelWidth "Radius" "1.0",
+                         fieldMaker hsgroup hsLabelWidth "drho" "1.0",
+                         fieldMaker hsgroup hsLabelWidth "Background" "0.0"]
 
 (hsButton,hsCollapse) = Collapse.collapsibleSignal hsTitle hsFields
 hsBox = Collapse.collapsible hsButton hsFields

@@ -9,11 +9,11 @@ group = fields ("Name","1.0")
 
 sig = group.events
 
-fieldMaker : {events:Signal (String,String),field:(FieldState->(String,String)) -> String -> FieldState ->Element } -> String -> String -> Element
-fieldMaker group name dflt = flow right [plainText name,
-                             group.field 
-                             (\r -> (name,r.string))
-                             name {string=dflt,selectionStart=0,selectionEnd=0}]
+fieldMaker : {events:Signal (String,String),field:(FieldState->(String,String)) -> String -> FieldState ->Element } -> Int -> String -> String -> Element
+fieldMaker group wide name dflt = flow right [width wide <| plainText name,
+                                              group.field 
+                                              (\r -> (name,r.string))
+                                              name {string=dflt,selectionStart=0,selectionEnd=0}]
 
 condenser (name,val) rec = case name of
                 "Test" -> {rec - test | test = getFloat val}
@@ -24,5 +24,5 @@ updater : ((String,String) -> b -> b) -> b -> Signal (String,String) -> Signal b
 updater f base = Automaton.run (Automaton.state base f) base
 
 main = lift (flow down) <| combine [lift (plainText . show) <| updater condenser {test=3.14,foo=159.1} sig,
-                                    constant <| fieldMaker group "Test" "3.14",
-                                    constant <| fieldMaker group "Foo" "159.1"]
+                                    constant <| fieldMaker group 100 "Test" "3.14",
+                                    constant <| fieldMaker group 100 "Foo" "159.1"]

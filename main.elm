@@ -19,11 +19,12 @@ qCondenser (name,val) rec = case name of
                             "qcount" -> {rec - qcount | qcount = getFloat val}
                             _ -> rec
                             
+qLabelWidth = widthOf . plainText . show <| "qcount"
 qSignal = updater qCondenser {qmin=0.001,qmax=20,qcount=1000} qGroup.events
 qTitle = plainText "Q-Range"
-qFields = flow down <| [fieldMaker qGroup "qmin" "0.001",
-                        fieldMaker qGroup "qmax" "20",
-                        fieldMaker qGroup "qcount" "1000"]
+qFields = flow down <| [fieldMaker qGroup qLabelWidth "qmin" "0.001",
+                        fieldMaker qGroup qLabelWidth "qmax" "20",
+                        fieldMaker qGroup qLabelWidth "qcount" "1000"]
 
 (qButton,qCollapse) = Collapse.collapsibleSignal qTitle qFields
 qBox = Collapse.collapsible qButton qFields
@@ -64,7 +65,7 @@ graphCanvas = lift7 canvas width height xaxis (snd xaxisKind) yaxis (snd yaxisKi
 
 --sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
-width= lift (\x -> x - 280) Window.width
+width= lift (\x -> x - 300) Window.width
 height= Window.height
 
 
