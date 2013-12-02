@@ -46,13 +46,6 @@ yaxis = lift4 axisMaker (snd yaxisKind) (lift toFloat height) (lift (foldr1 min 
 xtics = lift2 (\kind pts -> ticMaker kind <| map snd pts) (snd xaxisKind) plotPoints
 
 ytics = lift2 (\kind pts -> ticMaker kind <| map snd pts) (snd yaxisKind) plotPoints
---qmin = labelledField "Q-min" "0.0"
---qmax = labelledField "Q-max" "100.0"
---qcount = labelledField "Q-samples" "100"
-
-
---Axis stuff
-
 
 
 plotPoints : Signal [(Float,Float)]
@@ -71,12 +64,6 @@ scene terms = flow right <| terms
 graphCanvas : Signal Element
 graphCanvas = lift7 canvas width height xaxis (snd xaxisKind) yaxis (snd yaxisKind) plotPoints
 
---testing data
---testread : (Float->Float) -> (Float->Float) -> [(Float,Float)] -> Element
---testread xax yax = +textHeightplainText . show . head . (projectPoints xax yax)
-
-
---sizeBox = foldl (lift2 above) (fst qcount) (map fst [qmax, qmin])
 
 width= lift (\x -> x - 300) Window.width
 height= Window.height
