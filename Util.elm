@@ -6,6 +6,7 @@ import Graphics.Input
 
 --Helper Function to read a Float
 getFloat = fromJust 0 . String.toFloat
+getInt = fromJust 0 . String.toInt
 
 liftFloat : Signal String -> Signal Float
 liftFloat = lift getFloat
@@ -29,13 +30,14 @@ range a b count = map (\x -> a + x/(count-1) *(b-a)) [0..(count)]
 
 labove = lift2 above
 
-floatPrecision : Int -> Float -> String
+--floatPrecision : Int -> Float -> String
 floatPrecision digits x =  let splitup = (String.split "e" <| show x)
                                mantissa = getFloat <| head splitup
                                adjust = if mantissa < 1 then 1 else 0
-                               exponent = if length splitup == 1 then 0 else getFloat . head  <| tail splitup
+                               exponent = if length splitup == 1 then 0 else getInt . head  <| tail splitup
                                secondExponent = truncate . logBase 10 <| mantissa
-                               sigDigs = round (mantissa  / (10 ^ (toFloat (secondExponent - digits))))
+                               sigDigs = round (mantissa  / (10 ^ (toFloat (exponent + secondExponent - digits))))
                                final = (toFloat sigDigs) / (10 ^ (toFloat digits)) * (10^adjust)
-                           in String.join "e" [show final , show (secondExponent-1)]
+                           in String.join "e" [show final , show (secondExponent-adjust)]
                                
+
