@@ -1,0 +1,910 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            main
+        </title>
+        <script type="text/javascript" src="/elm-runtime.js">
+            
+        </script>
+        <script type="text/javascript">
+            Elm.Main = Elm.Main || {};
+Elm.Main.make = function (elm)
+                {
+                  elm.Main = elm.Main || {};
+                  if (elm.Main.values)
+                  return elm.Main.values;
+                  var N = Elm.Native,
+                      _N = N.Utils.make(elm),
+                      _L = N.List.make(elm),
+                      _E = N.Error.make(elm),
+                      _J = N.JavaScript.make(elm),
+                      $moduleName = "Main";
+                  var Text = Elm.Text.make(elm);
+                  var Text = Elm.Text.make(elm);
+                  var Basics = Elm.Basics.make(elm);
+                  var Signal = Elm.Signal.make(elm);
+                  var List = Elm.List.make(elm);
+                  var Maybe = Elm.Maybe.make(elm);
+                  var Time = Elm.Time.make(elm);
+                  var Prelude = Elm.Prelude.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Element = Elm.Graphics.Element.make(elm);
+                  var Color = Elm.Color.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Input = Elm.Graphics.Input.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Element = Elm.Graphics.Element.make(elm);
+                  var FormFactor = Elm.FormFactor.make(elm);
+                  var Util = Elm.Util.make(elm);
+                  var Window = Elm.Window.make(elm);
+                  var Collapse = Elm.Collapse.make(elm);
+                  var Fields = Elm.Fields.make(elm);
+                  var Graph = Elm.Graph.make(elm);
+                  var _op = {};
+                  var yaxisKind = A2(Util.labelledChoice,
+                                     "Y-axis",
+                                     _J.toList([{ctor: "_Tuple2", _0: "Linear", _1: Graph.Linear},
+                                                {ctor: "_Tuple2", _0: "Log", _1: Graph.Log}]));
+                  var xaxisKind = A2(Util.labelledChoice,
+                                     "X-axis",
+                                     _J.toList([{ctor: "_Tuple2", _0: "Linear", _1: Graph.Linear},
+                                                {ctor: "_Tuple2", _0: "Log", _1: Graph.Log}]));
+                  var width = A2(Signal.lift,
+                                 function (x)
+                                 {
+                                   return x - 300;
+                                 },
+                                 Window.width);
+                  var valueTitle = Text.text(Text.color(Color.blue)(Text.toText("Values")));
+                  var valueTable = Text.plainText("Lorem Ipsum");
+                  var tablePoints = function (pts)
+                                    {
+                                      return function ()
+                                             {
+                                               var ys = A2(List.map,
+                                                           function ($)
+                                                           {
+                                                             return Text.plainText(Prelude.show(Basics.snd($)));
+                                                           },
+                                                           pts);
+                                               var ymax = List.maximum(A2(List.map,
+                                                                          Graphics.Element.widthOf,
+                                                                          ys));
+                                               var xs = A2(List.map,
+                                                           function ($)
+                                                           {
+                                                             return Text.plainText(Prelude.show(Basics.fst($)));
+                                                           },
+                                                           pts);
+                                               var xmax = List.maximum(A2(List.map,
+                                                                          Graphics.Element.widthOf,
+                                                                          xs));
+                                               return Graphics.Element.flow(Graphics.Element.down)(List.map(function (arg0)
+                                                                                                            {
+                                                                                                              return function ()
+                                                                                                                     {
+                                                                                                                       switch (arg0.ctor)
+                                                                                                                       {case
+                                                                                                                        "_Tuple2" :
+                                                                                                                          return A2(Graphics.Element.beside,
+                                                                                                                                    A2(Graphics.Element.width,
+                                                                                                                                       xmax,
+                                                                                                                                       arg0._0),
+                                                                                                                                    A2(Graphics.Element.width,
+                                                                                                                                       ymax,
+                                                                                                                                       arg0._1));}
+                                                                                                                       _E.Case($moduleName,
+                                                                                                                               "on line 59, column 59 to 118");
+                                                                                                                     }();
+                                                                                                            })(A2(List.zip,
+                                                                                                                  xs,
+                                                                                                                  ys)));
+                                             }();
+                                    };
+                  var scene = function (terms)
+                              {
+                                return Graphics.Element.flow(Graphics.Element.right)(terms);
+                              };
+                  var qTitle = Text.text(Text.color(A4(Color.Color,
+                                                       0,
+                                                       0,
+                                                       255,
+                                                       1))(Text.toText("▼ Q-Range")));
+                  var qRange = function (rec)
+                               {
+                                 return A3(Util.range,rec.qmin,rec.qmax,rec.qcount + 1);
+                               };
+                  var qLabelWidth = Graphics.Element.widthOf(Text.plainText(Prelude.show("qcount")));
+                  var qGroup = Graphics.Input.fields({ctor: "_Tuple2", _0: "Name", _1: "Value"});
+                  var qFields = Graphics.Element.flow(Graphics.Element.down)(_J.toList([A4(Fields.fieldMaker,
+                                                                                           qGroup,
+                                                                                           qLabelWidth,
+                                                                                           "qmin",
+                                                                                           "0.001"),
+                                                                                        A4(Fields.fieldMaker,
+                                                                                           qGroup,
+                                                                                           qLabelWidth,
+                                                                                           "qmax",
+                                                                                           "20"),
+                                                                                        A4(Fields.fieldMaker,
+                                                                                           qGroup,
+                                                                                           qLabelWidth,
+                                                                                           "qcount",
+                                                                                           "1000")]));
+                  var qCondenser = F2(function (arg1,rec)
+                                      {
+                                        return function ()
+                                               {
+                                                 switch (arg1.ctor)
+                                                 {case
+                                                  "_Tuple2" :
+                                                    return function ()
+                                                           {
+                                                             switch (arg1._0)
+                                                             {case
+                                                              "qcount" :
+                                                                return _N.insert("qcount",
+                                                                                 Util.getFloat(arg1._1),
+                                                                                 _N.remove("qcount",
+                                                                                           rec));
+                                                              case
+                                                              "qmax" :
+                                                                return _N.insert("qmax",
+                                                                                 Util.getFloat(arg1._1),
+                                                                                 _N.remove("qmax",
+                                                                                           rec));
+                                                              case
+                                                              "qmin" :
+                                                                return _N.insert("qmin",
+                                                                                 Util.getFloat(arg1._1),
+                                                                                 _N.remove("qmin",
+                                                                                           rec));}
+                                                             return rec;
+                                                           }();}
+                                                 _E.Case($moduleName,"between lines 17 and 22");
+                                               }();
+                                      });
+                  var qSignal = A3(Fields.updater,
+                                   qCondenser,
+                                   {_: {}, qcount: 1000, qmax: 20, qmin: 1.0e-3},
+                                   qGroup.events);
+                  var xaxis = A5(Signal.lift4,
+                                 Graph.axisMaker,
+                                 Basics.snd(xaxisKind),
+                                 A2(Signal.lift,Basics.toFloat,width),
+                                 A2(Signal.lift,
+                                    function (x)
+                                    {
+                                      return x.qmin;
+                                    },
+                                    qSignal),
+                                 A2(Signal.lift,
+                                    function (x)
+                                    {
+                                      return x.qmax;
+                                    },
+                                    qSignal));
+                  var plotPoints = A3(Signal.lift2,
+                                      Graph.makePoints,
+                                      A2(Signal.lift,qRange,qSignal),
+                                      A2(Signal.lift,FormFactor.hardSphere,FormFactor.hsSignal));
+                  var xtics = A3(Signal.lift2,
+                                 F2(function (kind,pts)
+                                    {
+                                      return Graph.ticMaker(kind)(A2(List.map,Basics.snd,pts));
+                                    }),
+                                 Basics.snd(xaxisKind),
+                                 plotPoints);
+                  var ytics = A3(Signal.lift2,
+                                 F2(function (kind,pts)
+                                    {
+                                      return Graph.ticMaker(kind)(A2(List.map,Basics.snd,pts));
+                                    }),
+                                 Basics.snd(yaxisKind),
+                                 plotPoints);
+                  var height = Window.height;
+                  var yaxis = A5(Signal.lift4,
+                                 Graph.axisMaker,
+                                 Basics.snd(yaxisKind),
+                                 A2(Signal.lift,Basics.toFloat,height),
+                                 A2(Signal.lift,
+                                    function ($)
+                                    {
+                                      return List.foldr1(Basics.min)(List.map(Basics.snd)($));
+                                    },
+                                    plotPoints),
+                                 A2(Signal.lift,
+                                    function ($)
+                                    {
+                                      return List.foldr1(Basics.max)(List.map(Basics.snd)($));
+                                    },
+                                    plotPoints));
+                  var graphCanvas = A8(Signal.lift7,
+                                       Graph.canvas,
+                                       width,
+                                       height,
+                                       xaxis,
+                                       Basics.snd(xaxisKind),
+                                       yaxis,
+                                       Basics.snd(yaxisKind),
+                                       plotPoints);
+                  var $ = A2(Collapse.collapsibleSignal,valueTitle,valueTable),
+                      valueButton = $._0,
+                      valueCollapse = $._1;
+                  var valueBox = A2(Collapse.collapsible,valueButton,valueTable);
+                  var $ = A2(Collapse.collapsibleSignal,qTitle,qFields),
+                      qButton = $._0,
+                      qCollapse = $._1;
+                  var qBox = A2(Collapse.collapsible,qButton,qFields);
+                  var sidebar = A2(Util.labove,
+                                   A2(Util.labove,
+                                      A2(Util.labove,
+                                         A2(Util.labove,
+                                            A2(Signal.lift,FormFactor.hsBox,FormFactor.hsCollapse),
+                                            A2(Signal.lift,qBox,qCollapse)),
+                                         Signal.constant(Text.text(Text.bold(Text.toText("Axis Options"))))),
+                                      Basics.fst(xaxisKind)),
+                                   Basics.fst(yaxisKind));
+                  var main = Signal.lift(scene)(Signal.combine(_J.toList([graphCanvas,
+                                                                          sidebar])));
+                  elm.Main.values = {_op: _op, qGroup: qGroup, qRange: qRange, qCondenser: qCondenser, qLabelWidth: qLabelWidth, qSignal: qSignal, qTitle: qTitle, qFields: qFields, qButton: qButton, qCollapse: qCollapse, qBox: qBox, valueTitle: valueTitle, valueTable: valueTable, valueButton: valueButton, valueCollapse: valueCollapse, valueBox: valueBox, xaxisKind: xaxisKind, yaxisKind: yaxisKind, xaxis: xaxis, yaxis: yaxis, xtics: xtics, ytics: ytics, plotPoints: plotPoints, tablePoints: tablePoints, scene: scene, graphCanvas: graphCanvas, width: width, height: height, sidebar: sidebar, main: main};
+                  return elm.Main.values;
+                };Elm.FormFactor = Elm.FormFactor || {};
+Elm.FormFactor.make = function (elm)
+                      {
+                        elm.FormFactor = elm.FormFactor || {};
+                        if (elm.FormFactor.values)
+                        return elm.FormFactor.values;
+                        var N = Elm.Native,
+                            _N = N.Utils.make(elm),
+                            _L = N.List.make(elm),
+                            _E = N.Error.make(elm),
+                            _J = N.JavaScript.make(elm),
+                            $moduleName = "FormFactor";
+                        var Text = Elm.Text.make(elm);
+                        var Text = Elm.Text.make(elm);
+                        var Basics = Elm.Basics.make(elm);
+                        var Signal = Elm.Signal.make(elm);
+                        var List = Elm.List.make(elm);
+                        var Maybe = Elm.Maybe.make(elm);
+                        var Time = Elm.Time.make(elm);
+                        var Prelude = Elm.Prelude.make(elm);
+                        var Graphics = Graphics || {};
+                        Graphics.Element = Elm.Graphics.Element.make(elm);
+                        var Color = Elm.Color.make(elm);
+                        var Graphics = Graphics || {};
+                        Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                        var Util = Elm.Util.make(elm);
+                        var Collapse = Elm.Collapse.make(elm);
+                        var Graphics = Graphics || {};
+                        Graphics.Input = Elm.Graphics.Input.make(elm);
+                        var Fields = Elm.Fields.make(elm);
+                        var _op = {};
+                        var hsgroup = Graphics.Input.fields({ctor: "_Tuple2", _0: "Name", _1: "1.0"});
+                        var hsTitle = Text.text(Text.color(A4(Color.Color,
+                                                              0,
+                                                              0,
+                                                              255,
+                                                              1))(Text.toText("▼ Hard Spheres")));
+                        var hsLabelWidth = Graphics.Element.widthOf(Text.plainText(Prelude.show("Background")));
+                        var hsFields = Graphics.Element.flow(Graphics.Element.down)(_J.toList([A4(Fields.fieldMaker,
+                                                                                                  hsgroup,
+                                                                                                  hsLabelWidth,
+                                                                                                  "Scale",
+                                                                                                  "1.0"),
+                                                                                               A4(Fields.fieldMaker,
+                                                                                                  hsgroup,
+                                                                                                  hsLabelWidth,
+                                                                                                  "Radius",
+                                                                                                  "1.0"),
+                                                                                               A4(Fields.fieldMaker,
+                                                                                                  hsgroup,
+                                                                                                  hsLabelWidth,
+                                                                                                  "drho",
+                                                                                                  "1.0"),
+                                                                                               A4(Fields.fieldMaker,
+                                                                                                  hsgroup,
+                                                                                                  hsLabelWidth,
+                                                                                                  "Background",
+                                                                                                  "0.0")]));
+                        var hsCondenser = F2(function (arg1,rec)
+                                             {
+                                               return function ()
+                                                      {
+                                                        switch (arg1.ctor)
+                                                        {case
+                                                         "_Tuple2" :
+                                                           return function ()
+                                                                  {
+                                                                    switch (arg1._0)
+                                                                    {case
+                                                                     "Background" :
+                                                                       return _N.insert("bgd",
+                                                                                        Util.getFloat(arg1._1),
+                                                                                        _N.remove("bgd",
+                                                                                                  rec));
+                                                                     case
+                                                                     "Radius" :
+                                                                       return _N.insert("radius",
+                                                                                        Util.getFloat(arg1._1),
+                                                                                        _N.remove("radius",
+                                                                                                  rec));
+                                                                     case
+                                                                     "Scale" :
+                                                                       return _N.insert("scale",
+                                                                                        Util.getFloat(arg1._1),
+                                                                                        _N.remove("scale",
+                                                                                                  rec));
+                                                                     case
+                                                                     "drho" :
+                                                                       return _N.insert("drho",
+                                                                                        Util.getFloat(arg1._1),
+                                                                                        _N.remove("drho",
+                                                                                                  rec));}
+                                                                    return rec;
+                                                                  }();}
+                                                        _E.Case($moduleName,
+                                                                "between lines 18 and 23");
+                                                      }();
+                                             });
+                        var hsSignal = A3(Fields.updater,
+                                          hsCondenser,
+                                          {_: {}, bgd: 0.0, drho: 1.0, radius: 1.0, scale: 1.0},
+                                          hsgroup.events);
+                        var hardSphere = F2(function (params,q)
+                                            {
+                                              return function ()
+                                                     {
+                                                       var xrad = q * params.radius;
+                                                       var vol = 4.0 * Basics.pi / 3.0 * Math.pow(params.radius,
+                                                                                                  3);
+                                                       var bes = 3.0 * (Basics.sin(xrad) - xrad * Basics.cos(xrad)) / Math.pow(xrad,
+                                                                                                                               3);
+                                                       var f = bes * params.drho;
+                                                       var f2 = f * f * vol * Math.pow(10,8);
+                                                       return params.scale * f2 + params.bgd;
+                                                     }();
+                                            });
+                        var $ = A2(Collapse.collapsibleSignal,hsTitle,hsFields),
+                            hsButton = $._0,
+                            hsCollapse = $._1;
+                        var hsBox = A2(Collapse.collapsible,hsButton,hsFields);
+                        elm.FormFactor.values = {_op: _op, hardSphere: hardSphere, hsCondenser: hsCondenser, hsgroup: hsgroup, hsSignal: hsSignal, hsTitle: hsTitle, hsLabelWidth: hsLabelWidth, hsFields: hsFields, hsButton: hsButton, hsCollapse: hsCollapse, hsBox: hsBox};
+                        return elm.FormFactor.values;
+                      };Elm.Collapse = Elm.Collapse || {};
+Elm.Collapse.make = function (elm)
+                    {
+                      elm.Collapse = elm.Collapse || {};
+                      if (elm.Collapse.values)
+                      return elm.Collapse.values;
+                      var N = Elm.Native,
+                          _N = N.Utils.make(elm),
+                          _L = N.List.make(elm),
+                          _E = N.Error.make(elm),
+                          _J = N.JavaScript.make(elm),
+                          $moduleName = "Collapse";
+                      var Text = Elm.Text.make(elm);
+                      var Text = Elm.Text.make(elm);
+                      var Basics = Elm.Basics.make(elm);
+                      var Signal = Elm.Signal.make(elm);
+                      var List = Elm.List.make(elm);
+                      var Maybe = Elm.Maybe.make(elm);
+                      var Time = Elm.Time.make(elm);
+                      var Prelude = Elm.Prelude.make(elm);
+                      var Graphics = Graphics || {};
+                      Graphics.Element = Elm.Graphics.Element.make(elm);
+                      var Color = Elm.Color.make(elm);
+                      var Graphics = Graphics || {};
+                      Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                      var Automaton = Elm.Automaton.make(elm);
+                      var Graphics = Graphics || {};
+                      Graphics.Element = Elm.Graphics.Element.make(elm);
+                      var Graphics = Graphics || {};
+                      Graphics.Input = Elm.Graphics.Input.make(elm);
+                      var Mouse = Elm.Mouse.make(elm);
+                      var Time = Elm.Time.make(elm);
+                      var Signal = Elm.Signal.make(elm);
+                      var _op = {};
+                      var tuple = F2(function (a,b)
+                                     {
+                                       return {ctor: "_Tuple2", _0: a, _1: b};
+                                     });
+                      var segment = A2(Graphics.Element.flow,
+                                       Graphics.Element.down,
+                                       _J.toList([Text.plainText("World!"),
+                                                  Text.plainText("I love"),
+                                                  Text.plainText("Stacy")]));
+                      var move2 = F3(function (arg2,arg1,value)
+                                     {
+                                       return function ()
+                                              {
+                                                switch (arg1.ctor)
+                                                {case
+                                                 "_Tuple2" :
+                                                   return function ()
+                                                          {
+                                                            switch (arg2.ctor)
+                                                            {case
+                                                             "_Tuple2" :
+                                                               return function ()
+                                                                      {
+                                                                        var goal = arg1._0 ? arg2._1 : arg2._0;
+                                                                        return function ()
+                                                                               {
+                                                                                 var _case6 = A2(Basics.compare,
+                                                                                                 value,
+                                                                                                 goal);
+                                                                                 switch (_case6.ctor)
+                                                                                 {case
+                                                                                  "EQ" :
+                                                                                    return value;
+                                                                                  case
+                                                                                  "GT" :
+                                                                                    return value - 1;
+                                                                                  case
+                                                                                  "LT" :
+                                                                                    return value + 1;}
+                                                                                 _E.Case($moduleName,
+                                                                                         "between lines 17 and 20");
+                                                                               }();
+                                                                      }();}
+                                                            _E.Case($moduleName,
+                                                                    "between lines 16 and 20");
+                                                          }();}
+                                                _E.Case($moduleName,"between lines 16 and 20");
+                                              }();
+                                     });
+                      var slider = F2(function (hTitle,hBox)
+                                      {
+                                        return A2(Automaton.state,
+                                                  hTitle,
+                                                  move2({ctor: "_Tuple2", _0: hTitle, _1: hBox}));
+                                      });
+                      var makeTitle = function (titleString)
+                                      {
+                                        return A3(Graphics.Input.customButton,
+                                                  Text.plainText(titleString),
+                                                  Text.plainText(titleString),
+                                                  Text.plainText(titleString));
+                                      };
+                      var flipper = F2(function (arg1,state)
+                                       {
+                                         return function ()
+                                                {
+                                                  return {ctor: "_Tuple2", _0: Basics.not(state), _1: Basics.not(state)};
+                                                }();
+                                       });
+                      var signalFlipper = A2(Automaton.run,
+                                             A2(Automaton.hiddenState,false,flipper),
+                                             false);
+                      var collapsible = F2(function (title,es)
+                                           {
+                                             return function ()
+                                                    {
+                                                      var box = A2(Graphics.Element.flow,
+                                                                   Graphics.Element.down,
+                                                                   _J.toList([title,es]));
+                                                      return function (h)
+                                                             {
+                                                               return A4(Graphics.Element.container,
+                                                                         Graphics.Element.widthOf(box),
+                                                                         h,
+                                                                         Graphics.Element.topLeft,
+                                                                         box);
+                                                             };
+                                                    }();
+                                           });
+                      var clickTimer = function (titleButton)
+                                       {
+                                         return A3(Signal.lift2,
+                                                   tuple,
+                                                   signalFlipper(titleButton),
+                                                   Time.every(15 * Time.millisecond));
+                                       };
+                      var collapsibleSignal = F2(function (titleElem,body)
+                                                 {
+                                                   return function ()
+                                                          {
+                                                            var $ = A3(Graphics.Input.customButton,
+                                                                       titleElem,
+                                                                       titleElem,
+                                                                       titleElem),
+                                                                title = $._0,
+                                                                tb = $._1;
+                                                            return {ctor: "_Tuple2", _0: title, _1: A3(Automaton.run,
+                                                                                                       A2(slider,
+                                                                                                          Graphics.Element.heightOf(title),
+                                                                                                          Graphics.Element.heightOf(title) + Graphics.Element.heightOf(body)),
+                                                                                                       Graphics.Element.heightOf(title),
+                                                                                                       clickTimer(tb))};
+                                                          }();
+                                                 });
+                      elm.Collapse.values = {_op: _op, segment: segment, move2: move2, tuple: tuple, collapsible: collapsible, makeTitle: makeTitle, slider: slider, clickTimer: clickTimer, flipper: flipper, signalFlipper: signalFlipper, collapsibleSignal: collapsibleSignal};
+                      return elm.Collapse.values;
+                    };Elm.Fields = Elm.Fields || {};
+Elm.Fields.make = function (elm)
+                  {
+                    elm.Fields = elm.Fields || {};
+                    if (elm.Fields.values)
+                    return elm.Fields.values;
+                    var N = Elm.Native,
+                        _N = N.Utils.make(elm),
+                        _L = N.List.make(elm),
+                        _E = N.Error.make(elm),
+                        _J = N.JavaScript.make(elm),
+                        $moduleName = "Fields";
+                    var Text = Elm.Text.make(elm);
+                    var Text = Elm.Text.make(elm);
+                    var Basics = Elm.Basics.make(elm);
+                    var Signal = Elm.Signal.make(elm);
+                    var List = Elm.List.make(elm);
+                    var Maybe = Elm.Maybe.make(elm);
+                    var Time = Elm.Time.make(elm);
+                    var Prelude = Elm.Prelude.make(elm);
+                    var Graphics = Graphics || {};
+                    Graphics.Element = Elm.Graphics.Element.make(elm);
+                    var Color = Elm.Color.make(elm);
+                    var Graphics = Graphics || {};
+                    Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                    var Util = Elm.Util.make(elm);
+                    var Graphics = Graphics || {};
+                    Graphics.Input = Elm.Graphics.Input.make(elm);
+                    var Automaton = Elm.Automaton.make(elm);
+                    var _op = {};
+                    var updater = F2(function (f,base)
+                                     {
+                                       return A2(Automaton.run,A2(Automaton.state,base,f),base);
+                                     });
+                    var group = Graphics.Input.fields({ctor: "_Tuple2", _0: "Name", _1: "1.0"});
+                    var sig = group.events;
+                    var fieldMaker = F4(function (group,wide,name,dflt)
+                                        {
+                                          return A2(Graphics.Element.flow,
+                                                    Graphics.Element.right,
+                                                    _J.toList([Graphics.Element.width(wide)(Text.plainText(name)),
+                                                               A3(group.field,
+                                                                  function (r)
+                                                                  {
+                                                                    return {ctor: "_Tuple2", _0: name, _1: r.string};
+                                                                  },
+                                                                  name,
+                                                                  {_: {}, selectionEnd: 0, selectionStart: 0, string: dflt})]));
+                                        });
+                    var condenser = F2(function (arg1,rec)
+                                       {
+                                         return function ()
+                                                {
+                                                  switch (arg1.ctor)
+                                                  {case
+                                                   "_Tuple2" :
+                                                     return function ()
+                                                            {
+                                                              switch (arg1._0)
+                                                              {case
+                                                               "Foo" :
+                                                                 return _N.insert("foo",
+                                                                                  Util.getFloat(arg1._1),
+                                                                                  _N.remove("foo",
+                                                                                            rec));
+                                                               case
+                                                               "Test" :
+                                                                 return _N.insert("test",
+                                                                                  Util.getFloat(arg1._1),
+                                                                                  _N.remove("test",
+                                                                                            rec));}
+                                                              return rec;
+                                                            }();}
+                                                  _E.Case($moduleName,"between lines 18 and 21");
+                                                }();
+                                       });
+                    var main = Signal.lift(Graphics.Element.flow(Graphics.Element.down))(Signal.combine(_J.toList([Signal.lift(function ($)
+                                                                                                                               {
+                                                                                                                                 return Text.plainText(Prelude.show($));
+                                                                                                                               })(A3(updater,
+                                                                                                                                     condenser,
+                                                                                                                                     {_: {}, foo: 159.1, test: 3.14},
+                                                                                                                                     sig)),
+                                                                                                                   Signal.constant(A4(fieldMaker,
+                                                                                                                                      group,
+                                                                                                                                      100,
+                                                                                                                                      "Test",
+                                                                                                                                      "3.14")),
+                                                                                                                   Signal.constant(A4(fieldMaker,
+                                                                                                                                      group,
+                                                                                                                                      100,
+                                                                                                                                      "Foo",
+                                                                                                                                      "159.1"))])));
+                    elm.Fields.values = {_op: _op, group: group, sig: sig, fieldMaker: fieldMaker, condenser: condenser, updater: updater, main: main};
+                    return elm.Fields.values;
+                  };Elm.Graph = Elm.Graph || {};
+Elm.Graph.make = function (elm)
+                 {
+                   elm.Graph = elm.Graph || {};
+                   if (elm.Graph.values)
+                   return elm.Graph.values;
+                   var N = Elm.Native,
+                       _N = N.Utils.make(elm),
+                       _L = N.List.make(elm),
+                       _E = N.Error.make(elm),
+                       _J = N.JavaScript.make(elm),
+                       $moduleName = "Graph";
+                   var Text = Elm.Text.make(elm);
+                   var Text = Elm.Text.make(elm);
+                   var Basics = Elm.Basics.make(elm);
+                   var Signal = Elm.Signal.make(elm);
+                   var List = Elm.List.make(elm);
+                   var Maybe = Elm.Maybe.make(elm);
+                   var Time = Elm.Time.make(elm);
+                   var Prelude = Elm.Prelude.make(elm);
+                   var Graphics = Graphics || {};
+                   Graphics.Element = Elm.Graphics.Element.make(elm);
+                   var Color = Elm.Color.make(elm);
+                   var Graphics = Graphics || {};
+                   Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                   var Graphics = Graphics || {};
+                   Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                   var Util = Elm.Util.make(elm);
+                   var _op = {};
+                   var textWidth = Basics.toFloat(Graphics.Element.widthOf(Text.plainText(Prelude.show("-9.99e-9"))));
+                   var textHeight = Basics.toFloat(Graphics.Element.heightOf(Text.plainText(Prelude.show("-9.99e-9"))));
+                   var smartTics = F2(function (count,pts)
+                                      {
+                                        return function ()
+                                               {
+                                                 var low = List.minimum(pts);
+                                                 var high = List.maximum(pts);
+                                                 return A3(Util.range,low,high,count);
+                                               }();
+                                      });
+                   var projectPoints = F3(function (fx,fy,ps)
+                                          {
+                                            return A2(List.zip,
+                                                      A2(List.map,
+                                                         function ($)
+                                                         {
+                                                           return fx(Basics.fst($));
+                                                         },
+                                                         ps),
+                                                      A2(List.map,
+                                                         function ($)
+                                                         {
+                                                           return fy(Basics.snd($));
+                                                         },
+                                                         ps));
+                                          });
+                   var xGrid = F3(function (h,xax,pts)
+                                  {
+                                    return function ()
+                                           {
+                                             var lines = List.map(function ($)
+                                                                  {
+                                                                    return Graphics.Collage.traced(Graphics.Collage.solid(Color.darkGrey))(Graphics.Collage.path(A2(projectPoints,
+                                                                                                                                                                    xax,
+                                                                                                                                                                    Basics.id)(function (x)
+                                                                                                                                                                               {
+                                                                                                                                                                                 return _J.toList([{ctor: "_Tuple2", _0: x, _1: Basics.toFloat(h) / -2 + textHeight},
+                                                                                                                                                                                                   {ctor: "_Tuple2", _0: x, _1: Basics.toFloat(h) / 2}]);
+                                                                                                                                                                               }($))));
+                                                                  })(pts);
+                                             var labels = List.map(function (x)
+                                                                   {
+                                                                     return Graphics.Collage.moveY(Basics.toFloat(h) / -2 + textHeight / 2)(Graphics.Collage.moveX(xax(x))(Graphics.Collage.toForm(Text.plainText(Util.floatPrecision(3)(x)))));
+                                                                   })(pts);
+                                             return Graphics.Collage.group(_J.toList([Graphics.Collage.group(lines),
+                                                                                      Graphics.Collage.group(labels)]));
+                                           }();
+                                  });
+                   var yGrid = F3(function (h,xax,pts)
+                                  {
+                                    return function ()
+                                           {
+                                             var lines = List.map(function ($)
+                                                                  {
+                                                                    return Graphics.Collage.traced(Graphics.Collage.solid(Color.darkGrey))(Graphics.Collage.path(A2(projectPoints,
+                                                                                                                                                                    Basics.id,
+                                                                                                                                                                    xax)(function (x)
+                                                                                                                                                                         {
+                                                                                                                                                                           return _J.toList([{ctor: "_Tuple2", _0: Basics.toFloat(h) / -2 + textWidth, _1: x},
+                                                                                                                                                                                             {ctor: "_Tuple2", _0: Basics.toFloat(h) / 2, _1: x}]);
+                                                                                                                                                                         }($))));
+                                                                  })(pts);
+                                             var labels = List.map(function (x)
+                                                                   {
+                                                                     return Graphics.Collage.moveX(Basics.toFloat(h) / -2 + textWidth / 2)(Graphics.Collage.moveY(xax(x))(Graphics.Collage.toForm(Text.plainText(Util.floatPrecision(3)(x)))));
+                                                                   })(pts);
+                                             return Graphics.Collage.group(_J.toList([Graphics.Collage.group(lines),
+                                                                                      Graphics.Collage.group(labels)]));
+                                           }();
+                                  });
+                   var makePoints = F2(function (base,f)
+                                       {
+                                         return List.zip(base)(A2(List.map,f,base));
+                                       });
+                   var log = Basics.logBase(10);
+                   var Log = {ctor: "Log"};
+                   var Linear = {ctor: "Linear"};
+                   var axisMaker = F5(function (kind,size,low,high,value)
+                                      {
+                                        return function ()
+                                               {
+                                                 switch (kind.ctor)
+                                                 {case
+                                                  "Linear" :
+                                                    return (value - low) / (high - low) * size - size / 2;
+                                                  case
+                                                  "Log" :
+                                                    return function ()
+                                                           {
+                                                             var v = log(value);
+                                                             var l = log(low);
+                                                             var h = log(high);
+                                                             return (v - l) / (h - l) * size - size / 2;
+                                                           }();}
+                                                 _E.Case($moduleName,"between lines 16 and 21");
+                                               }();
+                                      });
+                   var ticMaker = function (kind)
+                                  {
+                                    return function ()
+                                           {
+                                             switch (kind.ctor)
+                                             {case
+                                              "Linear" :
+                                                return smartTics(3);
+                                              case
+                                              "Log" :
+                                                return function ($)
+                                                       {
+                                                         return List.map(function (x)
+                                                                         {
+                                                                           return Math.pow(Basics.e,
+                                                                                           x);
+                                                                         })(smartTics(4)(List.map(log)($)));
+                                                       };}
+                                             _E.Case($moduleName,"between lines 25 and 27");
+                                           }();
+                                  };
+                   var canvas = F7(function (w,h,xax,xKind,yax,yKind,points)
+                                   {
+                                     return A3(Graphics.Collage.collage,
+                                               w,
+                                               h,
+                                               _J.toList([Graphics.Collage.traced(Graphics.Collage.solid(Color.lightBlue))(Graphics.Collage.path(A3(projectPoints,
+                                                                                                                                                    xax,
+                                                                                                                                                    yax,
+                                                                                                                                                    points))),
+                                                          A2(xGrid,
+                                                             h,
+                                                             xax)(ticMaker(xKind)(A2(List.map,
+                                                                                     Basics.fst,
+                                                                                     points))),
+                                                          A2(yGrid,
+                                                             w,
+                                                             yax)(ticMaker(yKind)(A2(List.map,
+                                                                                     Basics.snd,
+                                                                                     points)))]));
+                                   });
+                   elm.Graph.values = {_op: _op, textWidth: textWidth, textHeight: textHeight, log: log, axisMaker: axisMaker, ticMaker: ticMaker, projectPoints: projectPoints, canvas: canvas, smartTics: smartTics, xGrid: xGrid, yGrid: yGrid, makePoints: makePoints, Linear: Linear, Log: Log};
+                   return elm.Graph.values;
+                 };Elm.Util = Elm.Util || {};
+Elm.Util.make = function (elm)
+                {
+                  elm.Util = elm.Util || {};
+                  if (elm.Util.values)
+                  return elm.Util.values;
+                  var N = Elm.Native,
+                      _N = N.Utils.make(elm),
+                      _L = N.List.make(elm),
+                      _E = N.Error.make(elm),
+                      _J = N.JavaScript.make(elm),
+                      $moduleName = "Util";
+                  var Text = Elm.Text.make(elm);
+                  var Text = Elm.Text.make(elm);
+                  var Basics = Elm.Basics.make(elm);
+                  var Signal = Elm.Signal.make(elm);
+                  var List = Elm.List.make(elm);
+                  var Maybe = Elm.Maybe.make(elm);
+                  var Time = Elm.Time.make(elm);
+                  var Prelude = Elm.Prelude.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Element = Elm.Graphics.Element.make(elm);
+                  var Color = Elm.Color.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                  var String = Elm.String.make(elm);
+                  var Graphics = Graphics || {};
+                  Graphics.Input = Elm.Graphics.Input.make(elm);
+                  var _op = {};
+                  var range = F3(function (a,b,count)
+                                 {
+                                   return A2(List.map,
+                                             function (x)
+                                             {
+                                               return a + x / (count - 1) * (b - a);
+                                             },
+                                             _L.range(0,count));
+                                 });
+                  var labove = Signal.lift2(Graphics.Element.above);
+                  var labelit = F2(function (title,elem)
+                                   {
+                                     return A2(Graphics.Element.flow,
+                                               Graphics.Element.right,
+                                               _J.toList([Text.plainText(title),elem]));
+                                   });
+                  var labelledChoice = F2(function (title,vals)
+                                          {
+                                            return function ()
+                                                   {
+                                                     var $ = Graphics.Input.dropDown(vals),
+                                                         elem = $._0,
+                                                         val = $._1;
+                                                     return {ctor: "_Tuple2", _0: A2(Signal.lift,
+                                                                                     labelit(title),
+                                                                                     elem), _1: val};
+                                                   }();
+                                          });
+                  var fromJust = F2(function (dflt,val)
+                                    {
+                                      return A3(Maybe.maybe,dflt,Basics.id,val);
+                                    });
+                  var getFloat = function ($)
+                                 {
+                                   return fromJust(0)(String.toFloat($));
+                                 };
+                  var liftFloat = Signal.lift(getFloat);
+                  var labelledField = F2(function (title,dflt)
+                                         {
+                                           return function ()
+                                                  {
+                                                    var $ = Graphics.Input.field(dflt),
+                                                        elem = $._0,
+                                                        str = $._1;
+                                                    return {ctor: "_Tuple2", _0: A2(Signal.lift,
+                                                                                    labelit(title),
+                                                                                    elem), _1: liftFloat(str)};
+                                                  }();
+                                         });
+                  var getInt = function ($)
+                               {
+                                 return fromJust(0)(String.toInt($));
+                               };
+                  var floatPrecision = F2(function (digits,x)
+                                          {
+                                            return function ()
+                                                   {
+                                                     var splitup = String.split("e")(Prelude.show(x));
+                                                     var mantissa = getFloat(List.head(splitup));
+                                                     var secondExponent = Basics.truncate(Basics.logBase(10)(mantissa));
+                                                     var exponent = _N.eq(List.length(splitup),
+                                                                          1) ? 0 : getInt(List.head(List.tail(splitup)));
+                                                     var sigDigs = Basics.round(mantissa / Math.pow(10,
+                                                                                                    Basics.toFloat(exponent + secondExponent - digits)));
+                                                     var adjust = _N.cmp(mantissa,1) < 0 ? 1 : 0;
+                                                     var $final = Basics.toFloat(sigDigs) / Math.pow(10,
+                                                                                                     Basics.toFloat(digits)) * Math.pow(10,
+                                                                                                                                        adjust);
+                                                     return A2(String.join,
+                                                               "e",
+                                                               _J.toList([Prelude.show($final),
+                                                                          Prelude.show(secondExponent - adjust)]));
+                                                   }();
+                                          });
+                  elm.Util.values = {_op: _op, getFloat: getFloat, getInt: getInt, liftFloat: liftFloat, labelit: labelit, labelledField: labelledField, labelledChoice: labelledChoice, fromJust: fromJust, range: range, labove: labove, floatPrecision: floatPrecision};
+                  return elm.Util.values;
+                };
+        </script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            Elm.fullscreen(Elm.Main)
+        </script>
+        <noscript>
+            
+        </noscript>
+    </body>
+</html>
