@@ -11,7 +11,7 @@ import Graph (makePoints,Axis,Linear,Log,axisMaker,canvas,ticMaker)
 
 
 qGroup = Graphics.Input.fields ("Name","Value")
-qRange rec = range rec.qmin rec.qmax rec.qcount
+qRange rec = range rec.qmin rec.qmax (rec.qcount+1)
 
 qCondenser (name,val) rec = case name of
                             "qmin" -> {rec - qmin | qmin = getFloat val}
