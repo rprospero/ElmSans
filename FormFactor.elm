@@ -20,7 +20,9 @@ formSignals = combine [lift HSParam HardSphere.hsSignal,
 formTitle : Element
 formTitle = text . Text.color (Color 0 0 255 1) . toText <| "▼ Form Factor"
 
-(formButton,formCollapse) = Collapse.collapsibleSignal formTitle HardSphere.hsFields
+(formButton,formCollapse) = Collapse.collapsibleSignal formTitle .
+                            maximum . map heightOf <|
+                            [HardSphere.hsFields,CoreShell.csFields]
 
 (formChoice,formSignal) = dropDown [("Hard Spheres",HSphere),("Core Shell",CShell)]
 

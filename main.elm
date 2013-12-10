@@ -27,12 +27,12 @@ qFields = flow down <| [fieldMaker qGroup qLabelWidth "qmin" "0.001",
                         fieldMaker qGroup qLabelWidth "qmax" "20",
                         fieldMaker qGroup qLabelWidth "qcount" "1000"]
 
-(qButton,qCollapse) = Collapse.collapsibleSignal qTitle qFields
+(qButton,qCollapse) = Collapse.collapsibleSignal qTitle (heightOf qFields)
 qBox = Collapse.collapsible qButton qFields
 
 valueTitle = text . Text.color blue . toText <| "Values"
 valueTable = plainText "Lorem Ipsum"
-(valueButton,valueCollapse) = Collapse.collapsibleSignal valueTitle valueTable
+(valueButton,valueCollapse) = Collapse.collapsibleSignal valueTitle <| heightOf valueTable
 valueBox = Collapse.collapsible valueButton valueTable
 
 xaxisKind = labelledChoice "X-axis" [("Linear",Linear),("Log",Log)]
