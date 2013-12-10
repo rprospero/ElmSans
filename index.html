@@ -6,7 +6,7 @@
         <title>
             main
         </title>
-        <script type="text/javascript" src="elm-runtime.js">
+        <script type="text/javascript" src="/home/adam/.cabal/share/x86_64-linux-ghc-7.6.2/Elm-0.10.0.2/elm-runtime.js">
             
         </script>
         <script type="text/javascript">
@@ -192,7 +192,10 @@ Elm.Main.make = function (elm)
                   var plotPoints = A3(Signal.lift2,
                                       Graph.makePoints,
                                       A2(Signal.lift,qRange,qSignal),
-                                      A2(Signal.lift,FormFactor.hardSphere,FormFactor.hsSignal));
+                                      A3(Signal.lift2,
+                                         FormFactor.iq,
+                                         FormFactor.formSignal,
+                                         FormFactor.iqSignal));
                   var xtics = A3(Signal.lift2,
                                  F2(function (kind,pts)
                                     {
@@ -233,11 +236,13 @@ Elm.Main.make = function (elm)
                                        yaxis,
                                        Basics.snd(yaxisKind),
                                        plotPoints);
-                  var $ = A2(Collapse.collapsibleSignal,valueTitle,valueTable),
+                  var $ = Collapse.collapsibleSignal(valueTitle)(Graphics.Element.heightOf(valueTable)),
                       valueButton = $._0,
                       valueCollapse = $._1;
                   var valueBox = A2(Collapse.collapsible,valueButton,valueTable);
-                  var $ = A2(Collapse.collapsibleSignal,qTitle,qFields),
+                  var $ = A2(Collapse.collapsibleSignal,
+                             qTitle,
+                             Graphics.Element.heightOf(qFields)),
                       qButton = $._0,
                       qCollapse = $._1;
                   var qBox = A2(Collapse.collapsible,qButton,qFields);
@@ -245,11 +250,16 @@ Elm.Main.make = function (elm)
                                    A2(Util.labove,
                                       A2(Util.labove,
                                          A2(Util.labove,
-                                            A2(Signal.lift,FormFactor.hsBox,FormFactor.hsCollapse),
-                                            A2(Signal.lift,qBox,qCollapse)),
-                                         Signal.constant(Text.text(Text.bold(Text.toText("Axis Options"))))),
-                                      Basics.fst(xaxisKind)),
-                                   Basics.fst(yaxisKind));
+                                            A2(Util.labove,
+                                               A3(Signal.lift2,
+                                                  FormFactor.formBox,
+                                                  FormFactor.formSignal,
+                                                  FormFactor.formCollapse),
+                                               A2(Signal.lift,qBox,qCollapse)),
+                                            Signal.constant(Text.text(Text.bold(Text.toText("Axis Options"))))),
+                                         Basics.fst(xaxisKind)),
+                                      Basics.fst(yaxisKind)),
+                                   FormFactor.formChoice);
                   var main = Signal.lift(scene)(Signal.combine(_J.toList([graphCanvas,
                                                                           sidebar])));
                   elm.Main.values = {_op: _op, qGroup: qGroup, qRange: qRange, qCondenser: qCondenser, qLabelWidth: qLabelWidth, qSignal: qSignal, qTitle: qTitle, qFields: qFields, qButton: qButton, qCollapse: qCollapse, qBox: qBox, valueTitle: valueTitle, valueTable: valueTable, valueButton: valueButton, valueCollapse: valueCollapse, valueBox: valueBox, xaxisKind: xaxisKind, yaxisKind: yaxisKind, xaxis: xaxis, yaxis: yaxis, xtics: xtics, ytics: ytics, plotPoints: plotPoints, tablePoints: tablePoints, scene: scene, graphCanvas: graphCanvas, width: width, height: height, sidebar: sidebar, main: main};
@@ -284,13 +294,124 @@ Elm.FormFactor.make = function (elm)
                         var Graphics = Graphics || {};
                         Graphics.Input = Elm.Graphics.Input.make(elm);
                         var Fields = Elm.Fields.make(elm);
+                        var HardSphere = Elm.HardSphere.make(elm);
+                        var CoreShell = Elm.CoreShell.make(elm);
+                        var _op = {};
+                        var formTitle = Text.text(Text.color(A4(Color.Color,
+                                                                0,
+                                                                0,
+                                                                255,
+                                                                1))(Text.toText("▼ Form Factor")));
+                        var HSphere = {ctor: "HSphere"};
+                        var HSParam = function (a)
+                                      {
+                                        return {ctor: "HSParam", _0: a};
+                                      };
+                        var CShell = {ctor: "CShell"};
+                        var CSParam = function (a)
+                                      {
+                                        return {ctor: "CSParam", _0: a};
+                                      };
+                        var formSignals = A2(Signal.lift2,
+                                             List.zipWith(Collapse.tuple),
+                                             Signal.constant(_J.toList([HSphere,
+                                                                        CShell])))(Signal.combine(_J.toList([A2(Signal.lift,
+                                                                                                                HSParam,
+                                                                                                                HardSphere.hsSignal),
+                                                                                                             A2(Signal.lift,
+                                                                                                                CSParam,
+                                                                                                                CoreShell.csSignal)])));
+                        var iq = F2(function (form,param)
+                                    {
+                                      return function ()
+                                             {
+                                               switch (form.ctor)
+                                               {case
+                                                "CShell" :
+                                                  return function ()
+                                                         {
+                                                           switch (param.ctor)
+                                                           {case
+                                                            "CSParam" :
+                                                              return CoreShell.coreShell(param._0);}
+                                                           _E.Case($moduleName,
+                                                                   "between lines 33 and 34");
+                                                         }();
+                                                case
+                                                "HSphere" :
+                                                  return function ()
+                                                         {
+                                                           switch (param.ctor)
+                                                           {case
+                                                            "HSParam" :
+                                                              return HardSphere.hardSphere(param._0);}
+                                                           _E.Case($moduleName,
+                                                                   "between lines 31 and 33");
+                                                         }();}
+                                               _E.Case($moduleName,"between lines 30 and 34");
+                                             }();
+                                    });
+                        var $ = Graphics.Input.dropDown(_J.toList([{ctor: "_Tuple2", _0: "Hard Spheres", _1: HSphere},
+                                                                   {ctor: "_Tuple2", _0: "Core Shell", _1: CShell}])),
+                            formChoice = $._0,
+                            formSignal = $._1;
+                        var iqSignal = A3(Signal.lift2,
+                                          Util.getAssoc,
+                                          formSignal,
+                                          formSignals);
+                        var $ = Collapse.collapsibleSignal(formTitle)(List.maximum(List.map(Graphics.Element.heightOf)(_J.toList([HardSphere.hsFields,
+                                                                                                                                  CoreShell.csFields])))),
+                            formButton = $._0,
+                            formCollapse = $._1;
+                        var formBox = function (form)
+                                      {
+                                        return Collapse.collapsible(formButton)(function ()
+                                                                                {
+                                                                                  switch (form.ctor)
+                                                                                  {case
+                                                                                   "CShell" :
+                                                                                     return CoreShell.csFields;
+                                                                                   case
+                                                                                   "HSphere" :
+                                                                                     return HardSphere.hsFields;}
+                                                                                  _E.Case($moduleName,
+                                                                                          "between lines 39 and 41");
+                                                                                }());
+                                      };
+                        elm.FormFactor.values = {_op: _op, formSignals: formSignals, formTitle: formTitle, formButton: formButton, formCollapse: formCollapse, formChoice: formChoice, formSignal: formSignal, iq: iq, iqSignal: iqSignal, formBox: formBox, HSphere: HSphere, CShell: CShell, HSParam: HSParam, CSParam: CSParam};
+                        return elm.FormFactor.values;
+                      };Elm.HardSphere = Elm.HardSphere || {};
+Elm.HardSphere.make = function (elm)
+                      {
+                        elm.HardSphere = elm.HardSphere || {};
+                        if (elm.HardSphere.values)
+                        return elm.HardSphere.values;
+                        var N = Elm.Native,
+                            _N = N.Utils.make(elm),
+                            _L = N.List.make(elm),
+                            _E = N.Error.make(elm),
+                            _J = N.JavaScript.make(elm),
+                            $moduleName = "HardSphere";
+                        var Text = Elm.Text.make(elm);
+                        var Text = Elm.Text.make(elm);
+                        var Basics = Elm.Basics.make(elm);
+                        var Signal = Elm.Signal.make(elm);
+                        var List = Elm.List.make(elm);
+                        var Maybe = Elm.Maybe.make(elm);
+                        var Time = Elm.Time.make(elm);
+                        var Prelude = Elm.Prelude.make(elm);
+                        var Graphics = Graphics || {};
+                        Graphics.Element = Elm.Graphics.Element.make(elm);
+                        var Color = Elm.Color.make(elm);
+                        var Graphics = Graphics || {};
+                        Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                        var Collapse = Elm.Collapse.make(elm);
+                        var Fields = Elm.Fields.make(elm);
+                        var Graphics = Graphics || {};
+                        Graphics.Input = Elm.Graphics.Input.make(elm);
+                        var Util = Elm.Util.make(elm);
                         var _op = {};
                         var hsgroup = Graphics.Input.fields({ctor: "_Tuple2", _0: "Name", _1: "1.0"});
-                        var hsTitle = Text.text(Text.color(A4(Color.Color,
-                                                              0,
-                                                              0,
-                                                              255,
-                                                              1))(Text.toText("▼ Hard Spheres")));
                         var hsLabelWidth = Graphics.Element.widthOf(Text.plainText(Prelude.show("Background")));
                         var hsFields = Graphics.Element.flow(Graphics.Element.down)(_J.toList([A4(Fields.fieldMaker,
                                                                                                   hsgroup,
@@ -349,7 +470,7 @@ Elm.FormFactor.make = function (elm)
                                                                     return rec;
                                                                   }();}
                                                         _E.Case($moduleName,
-                                                                "between lines 18 and 23");
+                                                                "between lines 20 and 25");
                                                       }();
                                              });
                         var hsSignal = A3(Fields.updater,
@@ -370,12 +491,12 @@ Elm.FormFactor.make = function (elm)
                                                        return params.scale * f2 + params.bgd;
                                                      }();
                                             });
-                        var $ = A2(Collapse.collapsibleSignal,hsTitle,hsFields),
-                            hsButton = $._0,
-                            hsCollapse = $._1;
-                        var hsBox = A2(Collapse.collapsible,hsButton,hsFields);
-                        elm.FormFactor.values = {_op: _op, hardSphere: hardSphere, hsCondenser: hsCondenser, hsgroup: hsgroup, hsSignal: hsSignal, hsTitle: hsTitle, hsLabelWidth: hsLabelWidth, hsFields: hsFields, hsButton: hsButton, hsCollapse: hsCollapse, hsBox: hsBox};
-                        return elm.FormFactor.values;
+                        var HardParam = F4(function (a,b,c,d)
+                                           {
+                                             return {_: {}, bgd: a, drho: c, radius: b, scale: d};
+                                           });
+                        elm.HardSphere.values = {_op: _op, hardSphere: hardSphere, hsCondenser: hsCondenser, hsgroup: hsgroup, hsSignal: hsSignal, hsLabelWidth: hsLabelWidth, hsFields: hsFields, HardParam: HardParam};
+                        return elm.HardSphere.values;
                       };Elm.Collapse = Elm.Collapse || {};
 Elm.Collapse.make = function (elm)
                     {
@@ -519,14 +640,171 @@ Elm.Collapse.make = function (elm)
                                                             return {ctor: "_Tuple2", _0: title, _1: A3(Automaton.run,
                                                                                                        A2(slider,
                                                                                                           Graphics.Element.heightOf(title),
-                                                                                                          Graphics.Element.heightOf(title) + Graphics.Element.heightOf(body)),
+                                                                                                          Graphics.Element.heightOf(title) + body),
                                                                                                        Graphics.Element.heightOf(title),
                                                                                                        clickTimer(tb))};
                                                           }();
                                                  });
                       elm.Collapse.values = {_op: _op, segment: segment, move2: move2, tuple: tuple, collapsible: collapsible, makeTitle: makeTitle, slider: slider, clickTimer: clickTimer, flipper: flipper, signalFlipper: signalFlipper, collapsibleSignal: collapsibleSignal};
                       return elm.Collapse.values;
-                    };Elm.Fields = Elm.Fields || {};
+                    };Elm.CoreShell = Elm.CoreShell || {};
+Elm.CoreShell.make = function (elm)
+                     {
+                       elm.CoreShell = elm.CoreShell || {};
+                       if (elm.CoreShell.values)
+                       return elm.CoreShell.values;
+                       var N = Elm.Native,
+                           _N = N.Utils.make(elm),
+                           _L = N.List.make(elm),
+                           _E = N.Error.make(elm),
+                           _J = N.JavaScript.make(elm),
+                           $moduleName = "CoreShell";
+                       var Text = Elm.Text.make(elm);
+                       var Text = Elm.Text.make(elm);
+                       var Basics = Elm.Basics.make(elm);
+                       var Signal = Elm.Signal.make(elm);
+                       var List = Elm.List.make(elm);
+                       var Maybe = Elm.Maybe.make(elm);
+                       var Time = Elm.Time.make(elm);
+                       var Prelude = Elm.Prelude.make(elm);
+                       var Graphics = Graphics || {};
+                       Graphics.Element = Elm.Graphics.Element.make(elm);
+                       var Color = Elm.Color.make(elm);
+                       var Graphics = Graphics || {};
+                       Graphics.Collage = Elm.Graphics.Collage.make(elm);
+                       var Graphics = Graphics || {};
+                       Graphics.Input = Elm.Graphics.Input.make(elm);
+                       var Fields = Elm.Fields.make(elm);
+                       var Util = Elm.Util.make(elm);
+                       var _op = {};
+                       var csgroup = Graphics.Input.fields({ctor: "_Tuple2", _0: "Name", _1: "1.0"});
+                       var csLabelWidth = Graphics.Element.widthOf(Text.plainText(Prelude.show("ShellThickness")));
+                       var csFields = Graphics.Element.flow(Graphics.Element.down)(_J.toList([A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "Scale",
+                                                                                                 "1.0"),
+                                                                                              A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "Core Radius",
+                                                                                                 "60.0"),
+                                                                                              A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "Shell Thickness",
+                                                                                                 "10.0"),
+                                                                                              A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "Core SLD",
+                                                                                                 "0.000001"),
+                                                                                              A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "Shell SLD",
+                                                                                                 "0.000002"),
+                                                                                              A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "SolventSLD",
+                                                                                                 "0.000003"),
+                                                                                              A4(Fields.fieldMaker,
+                                                                                                 csgroup,
+                                                                                                 csLabelWidth,
+                                                                                                 "Background",
+                                                                                                 "0.0")]));
+                       var csCondenser = F2(function (arg1,rec)
+                                            {
+                                              return function ()
+                                                     {
+                                                       switch (arg1.ctor)
+                                                       {case
+                                                        "_Tuple2" :
+                                                          return function ()
+                                                                 {
+                                                                   switch (arg1._0)
+                                                                   {case
+                                                                    "Background" :
+                                                                      return _N.insert("bgd",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("bgd",
+                                                                                                 rec));
+                                                                    case
+                                                                    "Core Radius" :
+                                                                      return _N.insert("coreRadius",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("coreRadius",
+                                                                                                 rec));
+                                                                    case
+                                                                    "Core SLD" :
+                                                                      return _N.insert("coreSLD",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("coreSLD",
+                                                                                                 rec));
+                                                                    case
+                                                                    "Scale" :
+                                                                      return _N.insert("scale",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("scale",
+                                                                                                 rec));
+                                                                    case
+                                                                    "Shell SLD" :
+                                                                      return _N.insert("shellSLD",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("shellSLD",
+                                                                                                 rec));
+                                                                    case
+                                                                    "Shell Thickness" :
+                                                                      return _N.insert("shellThickness",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("shellThickness",
+                                                                                                 rec));
+                                                                    case
+                                                                    "Solvent SLD" :
+                                                                      return _N.insert("solventSLD",
+                                                                                       Util.getFloat(arg1._1),
+                                                                                       _N.remove("solventSLD",
+                                                                                                 rec));}
+                                                                   _E.Case($moduleName,
+                                                                           "between lines 28 and 35");
+                                                                 }();}
+                                                       _E.Case($moduleName,
+                                                               "between lines 28 and 35");
+                                                     }();
+                                            });
+                       var csSignal = A3(Fields.updater,
+                                         csCondenser,
+                                         {_: {}, bgd: 0.0, coreRadius: 60.0, coreSLD: 1.0e-6, scale: 1.0, shellSLD: 2.0e-6, shellThickness: 10.0, solventSLD: 3.0e-6},
+                                         csgroup.events);
+                       var coreShell = F2(function (params,q)
+                                          {
+                                            return function ()
+                                                   {
+                                                     var t = params.shellThickness;
+                                                     var rc = params.coreRadius;
+                                                     var rs = rc + t;
+                                                     var vs = 4.0 * Basics.pi / 3.0 * Math.pow(rs,
+                                                                                               3);
+                                                     var vc = 4.0 * Basics.pi / 3.0 * Math.pow(rc,
+                                                                                               3);
+                                                     var j = function (x)
+                                                             {
+                                                               return (Basics.sin(x) - x * Basics.cos(x)) / Math.pow(x,
+                                                                                                                     3);
+                                                             };
+                                                     return Math.pow(10,
+                                                                     8) * params.scale / vs * Math.pow(3 * vc * (params.coreSLD - params.shellSLD) * j(q * rc) + 3 * vs * (params.shellSLD - params.solventSLD) * j(q * rs),
+                                                                                                       2) + params.bgd;
+                                                   }();
+                                          });
+                       var CoreParam = F7(function (a,b,c,d,e,f,g)
+                                          {
+                                            return {_: {}, bgd: a, coreRadius: b, coreSLD: d, scale: g, shellSLD: e, shellThickness: c, solventSLD: f};
+                                          });
+                       elm.CoreShell.values = {_op: _op, coreShell: coreShell, csCondenser: csCondenser, csgroup: csgroup, csSignal: csSignal, csLabelWidth: csLabelWidth, csFields: csFields, CoreParam: CoreParam};
+                       return elm.CoreShell.values;
+                     };Elm.Fields = Elm.Fields || {};
 Elm.Fields.make = function (elm)
                   {
                     elm.Fields = elm.Fields || {};
@@ -848,6 +1126,20 @@ Elm.Util.make = function (elm)
                                                                                      elem), _1: val};
                                                    }();
                                           });
+                  var getAssoc = function (k)
+                                 {
+                                   return function ($)
+                                          {
+                                            return Basics.snd(List.head(List.filter(function ($)
+                                                                                    {
+                                                                                      return function (x)
+                                                                                             {
+                                                                                               return _N.eq(x,
+                                                                                                            k);
+                                                                                             }(Basics.fst($));
+                                                                                    })($)));
+                                          };
+                                 };
                   var fromJust = F2(function (dflt,val)
                                     {
                                       return A3(Maybe.maybe,dflt,Basics.id,val);
@@ -894,7 +1186,7 @@ Elm.Util.make = function (elm)
                                                                           Prelude.show(secondExponent - adjust)]));
                                                    }();
                                           });
-                  elm.Util.values = {_op: _op, getFloat: getFloat, getInt: getInt, liftFloat: liftFloat, labelit: labelit, labelledField: labelledField, labelledChoice: labelledChoice, fromJust: fromJust, range: range, labove: labove, floatPrecision: floatPrecision};
+                  elm.Util.values = {_op: _op, getFloat: getFloat, getInt: getInt, liftFloat: liftFloat, labelit: labelit, labelledField: labelledField, labelledChoice: labelledChoice, fromJust: fromJust, range: range, labove: labove, floatPrecision: floatPrecision, getAssoc: getAssoc};
                   return elm.Util.values;
                 };
         </script>
