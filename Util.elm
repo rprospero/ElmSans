@@ -41,3 +41,5 @@ floatPrecision digits x =  let splitup = (String.split "e" <| show x)
                            in String.join "e" [show final , show (secondExponent-adjust)]
                                
 
+getAssoc : a -> [(a,b)] -> b
+getAssoc k = snd . head . filter ((\ x -> x == k) . fst)
