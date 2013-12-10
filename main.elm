@@ -65,7 +65,7 @@ graphCanvas : Signal Element
 graphCanvas = lift7 canvas width height xaxis (snd xaxisKind) yaxis (snd yaxisKind) plotPoints
 
 
-width= lift (\x -> x - 300) Window.width
+width= lift (\x -> x - 325) Window.width
 height= Window.height
 
 
