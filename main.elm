@@ -49,7 +49,7 @@ ytics = lift2 (\kind pts -> ticMaker kind <| map snd pts) (snd yaxisKind) plotPo
 
 
 plotPoints : Signal [(Float,Float)]
-plotPoints = lift2 makePoints (lift qRange qSignal) (lift FormFactor.iq FormFactor.iqSignal)
+plotPoints = lift2 makePoints (lift qRange qSignal) (lift2 FormFactor.iq FormFactor.formSignal FormFactor.iqSignal)
 
 -- Turns a list of point tuples into a 2d table
 tablePoints pts = let xs = map (plainText . show . fst) pts
@@ -70,7 +70,7 @@ height= Window.height
 
 
 sidebar : Signal Element
-sidebar = lift FormFactor.formBox FormFactor.formCollapse `labove` lift qBox qCollapse `labove` constant  (text . bold . toText <| "Axis Options") `labove` fst xaxisKind `labove` fst yaxisKind -- `labove` lift (tablePoints . take 5) plotPoints
+sidebar = lift2 FormFactor.formBox FormFactor.formSignal FormFactor.formCollapse `labove` lift qBox qCollapse `labove` constant  (text . bold . toText <| "Axis Options") `labove` fst xaxisKind `labove` fst yaxisKind `labove` FormFactor.formChoice
 
 
 main = lift scene <| combine [graphCanvas , sidebar]

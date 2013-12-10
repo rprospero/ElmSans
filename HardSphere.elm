@@ -5,6 +5,9 @@ import Fields (updater,fieldMaker)
 import Graphics.Input (fields)
 import Util (getFloat)
 
+type HardParam = {bgd : Float, radius : Float, drho : Float, scale : Float}
+
+hardSphere : HardParam -> Float -> Float
 hardSphere params q = 
            let xrad = q * params.radius
                bes  = 3.0*(sin xrad - xrad * cos xrad)/(xrad ^ 3)
